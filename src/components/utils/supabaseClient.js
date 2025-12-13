@@ -1,8 +1,18 @@
 import { createClient } from "@supabase/supabase-js";
 
-// Get these from your Supabase dashboard (⚠️ Never expose these in production without env protection)
-const supabaseUrl = "https://yziyijvnxxerstenygzu.supabase.co/";
-const supabaseKey =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl6aXlpanZueHhlcnN0ZW55Z3p1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDkzMDE1MDQsImV4cCI6MjA2NDg3NzUwNH0.0mTO-eOmozXlvw0w1FaDxCoXBZBvLiqrKOodHloGevQ";
+// ✅ Use environment variables instead of hardcoding credentials
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-export const supabase = createClient(supabaseUrl, supabaseKey);
+if (!supabaseUrl || !supabaseKey) {
+  throw new Error("Missing Supabase environment variables. Check .env.local file");
+}
+
+// ✅ Create Supabase client with persistence enabled for better session management
+export const supabase = createClient(supabaseUrl, supabaseKey, {
+  auth: {
+    persistSession: true,
+    autoRefreshToken: true,
+    detectSessionInUrl: true,
+  },
+});

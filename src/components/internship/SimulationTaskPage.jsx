@@ -257,7 +257,7 @@ const SimulationTaskPage = () => {
     }
 
     try {
-      const result = await updateTaskProgress(currentUser.id, parseInt(id), taskId, status);
+      const result = await updateTaskProgress(currentUser.id, id, taskId, status);
       
       if (result) {
         // Update local state optimistically
@@ -320,7 +320,7 @@ const SimulationTaskPage = () => {
         setError(null);
         
         const sims = await fetchSimulations();
-        const sim = sims.find((s) => s.id === parseInt(id));
+        const sim = sims.find((s) => s.id === id);
         
         if (!sim) {
           setError('Simulation not found.');

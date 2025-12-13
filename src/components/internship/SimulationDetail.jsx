@@ -121,7 +121,7 @@ const SimulationDetail = () => {
   useEffect(() => {
     const loadData = async () => {
       const allSimulations = await fetchSimulations();
-      const sim = allSimulations.find((s) => s.id === parseInt(id));
+      const sim = allSimulations.find((s) => s.id === id);
       setSimulation(sim);
 
       if (sim) {

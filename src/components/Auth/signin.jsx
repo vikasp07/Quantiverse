@@ -188,45 +188,74 @@ const Signin = () => {
     setToast("");
 
     try {
-      const result = await signInUser({ email, password });
+      // ✅ Trim whitespace from inputs
+      const trimmedEmail = email.trim().toLowerCase();
+      const trimmedPassword = password.trim();
+
+      // ✅ Basic validation
+      if (!trimmedEmail || !trimmedPassword) {
+        setError("Please enter both email and password");
+        setLoading(false);
+        return;
+      }
+
+      const result = await signInUser({ email: trimmedEmail, password: trimmedPassword });
 
       if (result.success) {
-        await supabase.auth.refreshSession();
+        // ✅ Wait a moment for session to persist before navigation
+        await new Promise((resolve) => setTimeout(resolve, 500));
 
         const {
           data: { user },
           error: userError,
         } = await supabase.auth.getUser();
 
-        if (userError || !user) throw new Error("User not found");
-
-        const { data: roleData, error: roleError } = await supabase
-          .from("user_roles")
-          .select("role")
-          .eq("user_id", user.id)
-          .single();
-
-        if (roleError) {
-          throw new Error("Could not fetch user role");
+        if (userError || !user) {
+          setError("Failed to retrieve user information. Please try again.");
+          setLoading(false);
+          return;
         }
 
-        if (roleData.role === "admin") {
-          navigate("/admin");
-        } else {
-          navigate("/home");
+        // ✅ Fetch user role with error handling
+        try {
+          const { data: roleData, error: roleError } = await supabase
+            .from("user_roles")
+            .select("role")
+            .eq("user_id", user.id)
+            .single();
+
+          if (roleError) {
+            console.warn("Role fetch warning:", roleError);
+            // ✅ Default to 'user' role if not found
+            navigate("/home");
+            return;
+          }
+
+          if (roleData?.role === "admin") {
+            navigate("/admin");
+          } else {
+            navigate("/home");
+          }
+        } catch (roleErr) {
+          console.error("Role fetch error:", roleErr);
+          navigate("/home"); // ✅ Default fallback
         }
       } else {
+        // ✅ Show user-friendly error messages
         const errMsg = result.error?.message || "Login failed";
-
+        
         if (errMsg.toLowerCase().includes("email not confirmed")) {
-          setToast("Email not confirmed. Please check your inbox.");
+          setToast("Email not confirmed. Check your inbox for verification link.");
+          setTimeout(() => setToast(""), 4000);
+        } else if (errMsg.toLowerCase().includes("invalid")) {
+          setError("Invalid email or password. Please check your credentials.");
         } else {
           setError(errMsg);
         }
       }
     } catch (err) {
-      console.error(err);
-      setError("Unexpected error occurred");
+      console.error("Login error:", err);
+      setError("An unexpected error occurred. Please try again.");
     } finally {
       setLoading(false);
     }

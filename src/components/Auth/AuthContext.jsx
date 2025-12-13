@@ -40,23 +40,58 @@ export const AuthContextProvider = ({ children }) => {
   };
 
   const signInUser = async ({ email, password }) => {
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
 
-    if (error) {
-      console.error("Sign-in error: ", error);
-      return { success: false, error };
+      if (error) {
+        console.error("Sign-in error: ", error);
+        
+        // ✅ Better error messaging for common issues
+        if (error.message.includes("Invalid login credentials")) {
+          return {
+            success: false,
+            error: {
+              ...error,
+              message: "Invalid email or password. Please check your credentials.",
+            },
+          };
+        }
+        
+        if (error.message.includes("Email not confirmed")) {
+          return {
+            success: false,
+            error: {
+              ...error,
+              message: "Please confirm your email before logging in. Check your inbox.",
+            },
+          };
+        }
+        
+        return { success: false, error };
+      }
+
+      // ✅ Verify session was created
+      if (!data.session) {
+        return {
+          success: false,
+          error: { message: "Session creation failed. Please try again." },
+        };
+      }
+
+      // ✅ Set session with proper state management
+      setSession(data.session);
+
+      return { success: true, data };
+    } catch (err) {
+      console.error("Unexpected sign-in error:", err);
+      return {
+        success: false,
+        error: { message: "An unexpected error occurred. Please try again." },
+      };
     }
-
-    // ✅ Get session after sign-in
-    const {
-      data: { session: currentSession },
-    } = await supabase.auth.getSession();
-    setSession(currentSession);
-
-    return { success: true, data };
   };
 
   const signOut = async () => {
