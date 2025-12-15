@@ -1,0 +1,42 @@
+[
+  {
+    "user_id": "1d192c17-624e-4aee-bdf5-56bdd348c658",
+    "user_name": "Atharva C",
+    "user_email": "atharvachawrekar27@gmail.com",
+    "internship_id": "45510087-5e12-4077-8dd3-2f9723cd9355",
+    "internship_name": "Frontend",
+    "enrolled_at": "2025-12-15T19:07:07.866731"
+  },
+  {
+    "user_id": "1d192c17-624e-4aee-bdf5-56bdd348c658",
+    "user_name": "Atharva C",
+    "user_email": "atharvachawrekar27@gmail.com",
+    "internship_id": "86527188-ce9c-4d71-a7a7-77cdda29bddf",
+    "internship_name": "Backend Engineering Virtual Internship",
+    "enrolled_at": "2025-12-15T19:08:05.395679"
+  },
+  {
+    "user_id": "d4f54d49-7ba2-4aa1-8dbf-4eada49c146a",
+    "user_name": "atharva",
+    "user_email": "chawrekaratharva@gmail.com",
+    "internship_id": "45510087-5e12-4077-8dd3-2f9723cd9355",
+    "internship_name": "Frontend",
+    "enrolled_at": "2025-12-15T19:11:09.443753"
+  },
+  {
+    "user_id": "d4f54d49-7ba2-4aa1-8dbf-4eada49c146a",
+    "user_name": "atharva",
+    "user_email": "chawrekaratharva@gmail.com",
+    "internship_id": "86527188-ce9c-4d71-a7a7-77cdda29bddf",
+    "internship_name": "Backend Engineering Virtual Internship",
+    "enrolled_at": "2025-12-15T19:11:16.823792"
+  },
+  {
+    "user_id": "d4f54d49-7ba2-4aa1-8dbf-4eada49c146a",
+    "user_name": "atharva",
+    "user_email": "chawrekaratharva@gmail.com",
+    "internship_id": "6daf31a1-1163-4a1a-a5aa-42b9d8c41358",
+    "internship_name": "Awerccewr",
+    "enrolled_at": "2025-12-15T19:21:07.031662"
+  }
+]

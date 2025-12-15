@@ -345,9 +345,42 @@ function SimulationsManager() {
                 {simulations.map((simulation) => (
                   <div
                     key={simulation.id}
-                    className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer border border-gray-200"
+                    className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer border border-gray-200 relative group"
                     onClick={() => handleSimulationClick(simulation.id)}
                   >
+                    {/* Hover Actions Overlay */}
+                    <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-60 transition-all duration-300 z-10 flex items-center justify-center opacity-0 group-hover:opacity-100 rounded-lg">
+                      <div className="flex flex-col gap-3 px-4">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleSimulationClick(simulation.id);
+                          }}
+                          className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 font-medium transition-colors"
+                        >
+                          ✏️ Edit Internship
+                        </button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            navigate(`/admin/internship/${simulation.id}/candidates`);
+                          }}
+                          className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 font-medium transition-colors"
+                        >
+                          👥 See Candidates
+                        </button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            alert('Delete functionality coming soon');
+                          }}
+                          className="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 font-medium transition-colors"
+                        >
+                          🗑️ Delete Internship
+                        </button>
+                      </div>
+                    </div>
+
                     {/* Image */}
                     <div className="h-48 bg-gradient-to-br from-blue-500 to-purple-600 rounded-t-lg flex items-center justify-center">
                       {simulation.image ? (

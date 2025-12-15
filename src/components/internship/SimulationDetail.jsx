@@ -10,6 +10,7 @@ import {
   Target,
   Star
 } from 'lucide-react';
+import axios from 'axios';
 
 import { fetchSimulations, fetchTasksForSimulation } from '../utils/simulations';
 import HowItWorksSection from './HowItWorksSection';
@@ -29,6 +30,8 @@ const SimulationDetail = () => {
   const [userLoaded, setUserLoaded] = useState(false);
   const [hasStarted, setHasStarted] = useState(false);
   const [nextTaskNumber, setNextTaskNumber] = useState(1);
+  const [isEnrolled, setIsEnrolled] = useState(false);
+  const [isEnrolling, setIsEnrolling] = useState(false);
 
   // Get current user
   useEffect(() => {
@@ -136,6 +139,50 @@ const SimulationDetail = () => {
     loadData();
   }, [id]);
 
+  // Check enrollment status
+  useEffect(() => {
+    const checkEnrollment = async () => {
+      if (currentUser && id) {
+        try {
+          const response = await axios.get('http://127.0.0.1:5000/enrollment-status', {
+            params: { user_id: currentUser.id, internship_id: id }
+          });
+          setIsEnrolled(response.data.is_enrolled || false);
+        } catch (error) {
+          console.error('Error checking enrollment:', error);
+        }
+      }
+    };
+
+    checkEnrollment();
+  }, [currentUser, id]);
+
+  const handleEnroll = async () => {
+    if (!currentUser) {
+      alert('Please sign in to enroll');
+      return;
+    }
+
+    setIsEnrolling(true);
+    try {
+      await axios.post('http://127.0.0.1:5000/enroll', {
+        user_id: currentUser.id,
+        user_name: currentUser.user_metadata?.display_name || currentUser.email,
+        user_email: currentUser.email,
+        internship_id: id,
+        internship_name: simulation.title
+      });
+      
+      setIsEnrolled(true);
+      alert('Successfully enrolled!');
+    } catch (error) {
+      console.error('Error enrolling:', error);
+      alert('Failed to enroll. Please try again.');
+    } finally {
+      setIsEnrolling(false);
+    }
+  };
+
   const currentTask = tasks.find((task) => task.id === selectedTask);
 
   const handleStartProgram = () => {
@@ -226,6 +273,24 @@ const SimulationDetail = () => {
                     </span>
                   </div>
                 </div>
+                
+                {/* Enrollment Button */}
+                {!isEnrolled ? (
+                  <button
+                    className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-4 rounded-md shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                    onClick={handleEnroll}
+                    disabled={isEnrolling}
+                  >
+                    {isEnrolling ? 'Enrolling...' : '✓ Enroll in this Program'}
+                  </button>
+                ) : (
+                  <div className="w-full bg-green-100 text-green-800 font-semibold py-3 px-4 rounded-md text-center flex items-center justify-center gap-2">
+                    <CheckCircle className="h-5 w-5" />
+                    <span>Enrolled</span>
+                  </div>
+                )}
+
+                {/* Start Program Button */}
                 <button
                   className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-md shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
                   onClick={handleStartProgram}

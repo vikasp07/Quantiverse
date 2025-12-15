@@ -56,6 +56,7 @@ import ScanResults from "./components/ScanResults";
 import AddInternship from "./components/admin/AddInternship";
 import SimulationsManager from "./components/admin/SimulationsManager";
 import Confirmation from "./components/admin/Confirmation";
+import InternshipCandidates from "./components/internship/InternshipCandidates";
 import LandingPage from "./components/resume_builder/LandingPage";
 import ResumeBuilder from "./components/resume_builder/ResumeBuilder";
 import DocumentCenter from "./components/document_center/DocumentCenter";
@@ -106,6 +107,14 @@ function App() {
         element={
           <ProtectedRoute>
             <SimulationsManager />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/internship/:internshipId/candidates"
+        element={
+          <ProtectedRoute>
+            <InternshipCandidates />
           </ProtectedRoute>
         }
       />
