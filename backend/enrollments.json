@@ -1,0 +1,56 @@
+[
+  {
+    "id": "enroll_001",
+    "user_id": "12345678-1234-1234-1234-123456789012",
+    "simulation_id": "6daf31a1-1163-4a1a-a5aa-42b9d8c41358",
+    "enrolled_at": "2025-01-15T10:30:00Z",
+    "status": "active",
+    "progress": {
+      "completed_tasks": 2,
+      "total_tasks": 5,
+      "completion_percentage": 40
+    },
+    "student_info": {
+      "name": "John Doe",
+      "email": "john.doe@example.com",
+      "university": "ABC University",
+      "major": "Computer Science"
+    }
+  },
+  {
+    "id": "enroll_002", 
+    "user_id": "87654321-4321-4321-4321-210987654321",
+    "simulation_id": "6daf31a1-1163-4a1a-a5aa-42b9d8c41358",
+    "enrolled_at": "2025-01-16T14:20:00Z",
+    "status": "active",
+    "progress": {
+      "completed_tasks": 1,
+      "total_tasks": 5,
+      "completion_percentage": 20
+    },
+    "student_info": {
+      "name": "Jane Smith",
+      "email": "jane.smith@example.com", 
+      "university": "XYZ Institute",
+      "major": "Software Engineering"
+    }
+  },
+  {
+    "id": "enroll_003",
+    "user_id": "11111111-2222-3333-4444-555555555555",
+    "simulation_id": "45510087-5e12-4077-8dd3-2f9723cd9355",
+    "enrolled_at": "2025-01-17T09:15:00Z",
+    "status": "completed",
+    "progress": {
+      "completed_tasks": 5,
+      "total_tasks": 5,
+      "completion_percentage": 100
+    },
+    "student_info": {
+      "name": "Alex Johnson",
+      "email": "alex.johnson@example.com",
+      "university": "Tech University", 
+      "major": "Information Technology"
+    }
+  }
+]

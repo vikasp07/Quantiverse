@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify,send_file
 import os
+import json
 from resume_parser import extract_text_from_pdf
 from match_gemini import match_skills
 from werkzeug.utils import secure_filename 
@@ -96,6 +97,70 @@ def compile_resume():
     except Exception as e:
         print("[ERROR] Exception in /compile:", str(e))
         return {"error": str(e)}, 500
+
+# Enrollment management endpoints
+@app.route('/enrollments', methods=['GET'])
+def get_all_enrollments():
+    """Get all enrollments"""
+    try:
+        with open('enrollments.json', 'r') as f:
+            enrollments = json.load(f)
+        return jsonify(enrollments)
+    except FileNotFoundError:
+        return jsonify([])
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/enrollments/user/<user_id>', methods=['GET'])
+def get_user_enrollments(user_id):
+    """Get enrollments for a specific user"""
+    try:
+        with open('enrollments.json', 'r') as f:
+            enrollments = json.load(f)
+        user_enrollments = [e for e in enrollments if e['user_id'] == user_id]
+        return jsonify(user_enrollments)
+    except FileNotFoundError:
+        return jsonify([])
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/enrollments/simulation/<simulation_id>', methods=['GET'])
+def get_simulation_enrollments(simulation_id):
+    """Get enrollments for a specific simulation"""
+    try:
+        with open('enrollments.json', 'r') as f:
+            enrollments = json.load(f)
+        sim_enrollments = [e for e in enrollments if e['simulation_id'] == simulation_id]
+        return jsonify(sim_enrollments)
+    except FileNotFoundError:
+        return jsonify([])
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/enrollments', methods=['POST'])
+def create_enrollment():
+    """Create a new enrollment"""
+    try:
+        data = request.json
+        
+        # Load existing enrollments
+        try:
+            with open('enrollments.json', 'r') as f:
+                enrollments = json.load(f)
+        except FileNotFoundError:
+            enrollments = []
+        
+        # Add new enrollment
+        enrollments.append(data)
+        
+        # Save back to file
+        with open('enrollments.json', 'w') as f:
+            json.dump(enrollments, f, indent=2)
+        
+        return jsonify({'message': 'Enrollment created successfully', 'enrollment': data}), 201
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
     
 
 @app.route('/')
@@ -103,6 +168,15 @@ def index():
     return '''
     <h2>Welcome to the ATS Backend</h2>
     <p>This is the backend server. Use POST /upload_resume to upload resumes.</p>
+    <h3>Available Endpoints:</h3>
+    <ul>
+        <li>POST /upload_resume - Upload and analyze resume</li>
+        <li>POST /compile - Compile resume to PDF</li>
+        <li>GET /enrollments - Get all enrollments</li>
+        <li>GET /enrollments/user/&lt;user_id&gt; - Get user enrollments</li>
+        <li>GET /enrollments/simulation/&lt;simulation_id&gt; - Get simulation enrollments</li>
+        <li>POST /enrollments - Create new enrollment</li>
+    </ul>
     '''
 
 if __name__ == '__main__':
