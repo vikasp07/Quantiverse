@@ -15,17 +15,48 @@ export async function fetchSimulations() {
   return data;
 }
 
+// Helper function to extract number from task title like "Task One", "Task Two", etc.
+const wordToNumber = (word) => {
+  const words = {
+    'one': 1, 'two': 2, 'three': 3, 'four': 4, 'five': 5,
+    'six': 6, 'seven': 7, 'eight': 8, 'nine': 9, 'ten': 10,
+    'eleven': 11, 'twelve': 12, 'thirteen': 13, 'fourteen': 14, 'fifteen': 15
+  };
+  return words[word.toLowerCase()] || 0;
+};
+
+const getTaskSortOrder = (task) => {
+  // If sequence exists, use it
+  if (task.sequence) {
+    return task.sequence;
+  }
+  
+  // Try to extract number from title (e.g., "Task One" -> 1, "Task Two" -> 2)
+  const match = task.title?.match(/Task\s+(\w+)/i);
+  if (match) {
+    const orderNum = wordToNumber(match[1]);
+    if (orderNum > 0) return orderNum;
+  }
+  
+  // Fallback to id
+  return task.id;
+};
+
 // Fetch tasks for a specific simulation
 export async function fetchTasksForSimulation(simulationId) {
   const { data, error } = await supabase
     .from('tasks')
     .select('*')
-    .eq('simulation_id', simulationId)
-    .order('id', { ascending: true });
+    .eq('simulation_id', simulationId);
 
   if (error) {
     console.error(`Error fetching tasks for simulation ${simulationId}:`, error.message);
     return [];
+  }
+  
+  // Sort tasks properly by sequence, title, or id
+  if (data && data.length > 0) {
+    return data.sort((a, b) => getTaskSortOrder(a) - getTaskSortOrder(b));
   }
   return data;
 }

@@ -191,6 +191,7 @@ function AddInternship() {
 
       formattedTasks.push({
         simulation_id,
+        sequence: idx + 1,
         title: `Task ${numberToWords(idx + 1)}`,
         full_title: capitalizeWords(task.full_title),
         duration: task.duration,
