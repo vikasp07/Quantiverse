@@ -70,5 +70,13 @@
     "internship_id": "6e020b65-cbfb-46aa-82e7-669fbfd03ba7",
     "internship_name": "Data Analytics Dashboard Development",
     "enrolled_at": "2025-12-19T17:10:56.424535"
+  },
+  {
+    "user_id": "d4f54d49-7ba2-4aa1-8dbf-4eada49c146a",
+    "user_name": "atharva",
+    "user_email": "chawrekaratharva@gmail.com",
+    "internship_id": "40f7dabf-9a18-44aa-a4b1-94e15d964536",
+    "internship_name": "E-Commerce Platform Development",
+    "enrolled_at": "2025-12-22T11:45:13.830778"
   }
 ]

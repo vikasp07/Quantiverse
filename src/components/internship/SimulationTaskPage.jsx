@@ -610,9 +610,14 @@ const SimulationTaskPage = () => {
                   </span>
                 )}
                 {(currentTask.confirmation_status === 'rejected' || currentTask.confirmation_status === 'accepted') && currentTask.comment && (
-                  <p className="text-sm text-gray-700 mt-2 italic">
-                    Feedback: {currentTask.comment}
-                  </p>
+                  <div className="mt-3">
+                    <div className="bg-blue-50 border-l-4 border-blue-300 text-gray-900 p-3 rounded-md text-sm leading-relaxed whitespace-pre-wrap">
+                      <div className="flex items-center gap-3">
+                        <span className="font-semibold text-blue-700">Feedback</span>
+                      </div>
+                      <div className="mt-1 text-gray-800">{currentTask.comment}</div>
+                    </div>
+                  </div>
                 )}
 
 
@@ -644,9 +649,14 @@ const SimulationTaskPage = () => {
                 {(currentTask.confirmation_status === "rejected" ||
                   currentTask.confirmation_status === "accepted") &&
                   currentTask.comment && (
-                    <p className="text-sm text-gray-700 mt-2 italic">
-                      Feedback: {currentTask.comment}
-                    </p>
+                    <div className="mt-3">
+                      <div className="bg-blue-50 border-l-4 border-blue-300 text-gray-900 p-3 rounded-md text-sm leading-relaxed whitespace-pre-wrap">
+                        <div className="flex items-center gap-3">
+                          <span className="font-semibold text-blue-700">Feedback</span>
+                        </div>
+                        <div className="mt-1 text-gray-800">{currentTask.comment}</div>
+                      </div>
+                    </div>
                   )}
               </>
             )}

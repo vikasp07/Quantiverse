@@ -206,9 +206,8 @@ const SimulationDetail = () => {
 
   const getButtonText = () => {
     if (isLoading) return "Loading...";
-    if (!currentUser) return "Start Free Program";
-    if (hasStarted) return "Continue Program";
-    return "Start Free Program";
+    if (hasStarted) return "Continue Simulation";
+    return "Enter Simulation";
   };
 
   const getButtonDescription = () => {
@@ -289,31 +288,46 @@ const SimulationDetail = () => {
                   </div>
                 </div>
                 
-                {/* Enrollment Button */}
+                {/* Combined Enrollment and Start Button */}
                 {!isEnrolled ? (
                   <button
-                    className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-4 rounded-md shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-semibold py-3 px-4 rounded-lg shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-105"
                     onClick={handleEnroll}
                     disabled={isEnrolling}
                   >
-                    {isEnrolling ? 'Enrolling...' : '✓ Enroll in this Program'}
+                    {isEnrolling ? 'Enrolling...' : '✓ Enroll Now - It\'s Free'}
                   </button>
-                ) : (
-                  <div className="w-full bg-green-100 text-green-800 font-semibold py-3 px-4 rounded-md text-center flex items-center justify-center gap-2">
-                    <CheckCircle className="h-5 w-5" />
-                    <span>Enrolled</span>
-                  </div>
+                ) : null}
+
+                {/* Enter Simulation Button - Only shown when enrolled */}
+                {isEnrolled && (
+                  <button
+                    className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-3 px-4 rounded-lg shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-105 flex items-center justify-center gap-2"
+                    onClick={handleStartProgram}
+                    disabled={isLoading}
+                  >
+                    {isLoading ? (
+                      <>
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                        Loading...
+                      </>
+                    ) : (
+                      <>
+                        <span>🚀 {getButtonText()}</span>
+                      </>
+                    )}
+                  </button>
                 )}
 
-                {/* Start Program Button */}
-                <button
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-md shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
-                  onClick={handleStartProgram}
-                  disabled={isLoading || !isEnrolled}
-                  title={!isEnrolled ? "Please enroll first to start the program" : ""}
-                >
-                  {getButtonText()}
-                </button>
+                {/* Status Badge when enrolled */}
+                {isEnrolled && !isLoading && (
+                  <div className="bg-green-50 border border-green-200 rounded-lg p-3 text-center">
+                    <p className="text-green-800 text-sm font-medium flex items-center justify-center gap-2">
+                      <CheckCircle className="h-4 w-4" />
+                      You're enrolled! Ready to start?
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
           </div>

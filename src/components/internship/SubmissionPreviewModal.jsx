@@ -154,9 +154,9 @@ const SubmissionPreviewModal = ({ task, isOpen, onClose, onReuploadSuccess }) =>
 
           {/* Admin Comment */}
           {task.comment && (
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-              <h3 className="font-semibold text-blue-900 mb-2">Admin Feedback</h3>
-              <p className="text-blue-800">{task.comment}</p>
+            <div className="bg-blue-50 border-2 border-blue-300 rounded-lg p-5">
+              <h3 className="font-bold text-base text-blue-900 mb-3">📋 Admin Feedback</h3>
+              <p className="text-gray-800 text-sm leading-relaxed whitespace-pre-wrap break-words">{task.comment}</p>
             </div>
           )}
 
