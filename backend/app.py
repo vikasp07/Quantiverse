@@ -2,6 +2,8 @@ from flask import Flask, request, jsonify, send_file, make_response
 import uuid
 import os
 import json
+import re
+import traceback
 from pathlib import Path
 from datetime import datetime
 from resume_parser import extract_text_from_pdf
@@ -531,7 +533,6 @@ def add_category():
             return jsonify({'error': 'Category must not exceed 50 characters'}), 400
         
         # Validation 4: Character restrictions (prevent XSS)
-        import re
         # Only allow alphanumeric, spaces, and safe special chars
         if not re.match(r'^[a-zA-Z0-9\s\-&/().,]+$', category):
             return jsonify({'error': 'Category contains invalid characters. Only letters, numbers, spaces, and - & / ( ) . , are allowed'}), 400
@@ -577,7 +578,6 @@ def search_categories():
             return jsonify({'error': 'Search query too long'}), 400
         
         # Validation 2: Sanitize query (prevent injection)
-        import re
         query = re.sub(r'<[^>]*>', '', query).strip()
         query_lower = query.lower()
         
