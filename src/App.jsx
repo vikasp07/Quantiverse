@@ -38,7 +38,7 @@ import JobReadinessAssessment from "./components/job_readiness/JobReadinessAsses
 import Feedback from "./components/job_readiness/Feedback";
 import Signin from "./components/Auth/signin";
 import Signup from "./components/Auth/signup";
-import ProtectedRoute from "./components/protectedRoute";
+import ProtectedRoute from "./components/ProtectedRoute";
 import { UserAuth } from "./components/Auth/AuthContext";
 import UpdatePassword from "./components/Auth/UpdatePassword";
 import AdminDashboard from "./components/AdminDashboard";

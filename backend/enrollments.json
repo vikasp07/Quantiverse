@@ -680,7 +680,10 @@
         "description": "Generate automated reports",
         "completed": false
       }
-    ]
+    ],
+    "total_tasks": 4,
+    "completed_tasks": 4,
+    "progress": 100
   },
   {
     "user_id": "b4c54906-4caf-4c44-bfd7-b5693c7eb247",
@@ -721,6 +724,37 @@
         "task_id": "task_7d2b45e7-3bc5-4f57-92cc-5efdb97dfe5c",
         "title": "Complete Internship",
         "order": 1,
+        "completed": false
+      }
+    ]
+  },
+  {
+    "user_id": "b4c54906-4caf-4c44-bfd7-b5693c7eb247",
+    "user_name": "vikas",
+    "user_email": "vksmp07@gmail.com",
+    "internship_id": "86527188-ce9c-4d71-a7a7-77cdda29bddf",
+    "internship_name": "Backend Engineering Virtual Internship223",
+    "enrolled_at": "2026-01-12T15:25:44.359109",
+    "tasks": [
+      {
+        "task_id": "backend_01",
+        "title": "Database Schema Design",
+        "order": 1,
+        "description": "Design database schema for the application",
+        "completed": false
+      },
+      {
+        "task_id": "backend_02",
+        "title": "API Endpoint Development",
+        "order": 2,
+        "description": "Create RESTful API endpoints",
+        "completed": false
+      },
+      {
+        "task_id": "backend_03",
+        "title": "Authentication Implementation",
+        "order": 3,
+        "description": "Implement user authentication and authorization",
         "completed": false
       }
     ]

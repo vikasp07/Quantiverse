@@ -204,7 +204,7 @@ const UserProfile = () => {
     total: e.total_tasks || 0,
   }));
 
-  const activityData = enrollments.map((e, index) => ({
+  const enrollmentActivityData = enrollments.map((e, index) => ({
     month: new Date(e.enrolled_at).toLocaleDateString("en-US", {
       month: "short",
     }),

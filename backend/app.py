@@ -448,7 +448,7 @@ def update_task_status(internship_id, user_id, task_id):
                         updated = True
 
         if updated:
-            save_enrollments()  # whatever function you already use to save JSON
+            save_enrollments(course_enrollments)  # Save updated enrollments to JSON
             return jsonify({'message': 'Task marked as completed'}), 200
 
         return jsonify({'error': 'Task not found'}), 404
