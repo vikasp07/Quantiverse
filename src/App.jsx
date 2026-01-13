@@ -62,12 +62,16 @@ import LandingPage from "./components/resume_builder/LandingPage";
 import ResumeBuilder from "./components/resume_builder/ResumeBuilder";
 import DocumentCenter from "./components/document_center/DocumentCenter";
 import UserProfile from "./components/profile/UserProfile";
+import ActivityTracker from "./components/utils/ActivityTracker";
 
 function App() {
   const { session } = UserAuth();
 
   return (
-    <Routes>
+    <>
+      {/* Activity Tracker - tracks user activity when logged in */}
+      {session?.user && <ActivityTracker />}
+      <Routes>
       <Route path="/" element={<Navigate to="/signup" replace />} />
       <Route path="/signin" element={<Signin />} />
       <Route path="/signup" element={<Signup />} />
@@ -254,6 +258,7 @@ function App() {
 
       <Route path="/resume-from-scratch" element={<ResumeFromScratch />} />
     </Routes>
+    </>
   );
 }
 

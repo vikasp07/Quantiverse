@@ -16,6 +16,10 @@ import {
   Activity,
   BarChart3,
   PieChart as PieChartIcon,
+  Timer,
+  MonitorPlay,
+  Wifi,
+  History,
 } from "lucide-react";
 import {
   BarChart,
@@ -57,6 +61,7 @@ const UserProfile = () => {
   const [enrollments, setEnrollments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [activityData, setActivityData] = useState(null);
   const [stats, setStats] = useState({
     totalEnrolled: 0,
     completed: 0,
@@ -69,6 +74,7 @@ const UserProfile = () => {
 
   useEffect(() => {
     fetchUserProfile();
+    fetchActivityData();
   }, [userId]);
 
   const fetchUserProfile = async () => {
@@ -89,6 +95,44 @@ const UserProfile = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const fetchActivityData = async () => {
+    try {
+      const response = await axios.get(
+        `http://127.0.0.1:5000/admin/user/${userId}/activity`
+      );
+      setActivityData(response.data);
+    } catch (err) {
+      console.error("Error fetching activity data:", err);
+      // Don't set error - activity data is optional
+    }
+  };
+
+  // Format seconds to readable time
+  const formatDuration = (seconds) => {
+    if (!seconds || seconds === 0) return "0s";
+    
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+    
+    if (hours > 0) {
+      return `${hours}h ${minutes}m`;
+    } else if (minutes > 0) {
+      return `${minutes}m ${secs}s`;
+    } else {
+      return `${secs}s`;
+    }
+  };
+
+  // Format page path for display
+  const formatPagePath = (path) => {
+    if (!path) return "Unknown";
+    // Remove leading slash and capitalize
+    const parts = path.replace(/^\//, '').split('/');
+    if (parts[0] === '') return 'Home';
+    return parts[0].charAt(0).toUpperCase() + parts[0].slice(1).replace(/-/g, ' ');
   };
 
   const calculateStats = (enrollmentData) => {
@@ -263,6 +307,169 @@ const UserProfile = () => {
             </div>
           </div>
         </div>
+
+        {/* Activity Tracking Section */}
+        {activityData && (
+          <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
+            <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+              <Activity className="w-6 h-6 text-indigo-600" />
+              User Activity & Time Tracking
+            </h2>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+              {/* First Seen */}
+              <div className="bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg p-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <Calendar className="w-5 h-5 text-blue-600" />
+                  <span className="text-sm font-medium text-blue-700">First Registered</span>
+                </div>
+                <p className="text-lg font-semibold text-gray-900">
+                  {activityData.first_seen ? formatDate(activityData.first_seen) : "N/A"}
+                </p>
+              </div>
+              
+              {/* Last Seen */}
+              <div className="bg-gradient-to-r from-green-50 to-green-100 rounded-lg p-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <History className="w-5 h-5 text-green-600" />
+                  <span className="text-sm font-medium text-green-700">Last Active</span>
+                </div>
+                <p className="text-lg font-semibold text-gray-900">
+                  {activityData.last_seen ? formatDate(activityData.last_seen) : "N/A"}
+                </p>
+              </div>
+              
+              {/* Total Time on Platform */}
+              <div className="bg-gradient-to-r from-purple-50 to-purple-100 rounded-lg p-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <Timer className="w-5 h-5 text-purple-600" />
+                  <span className="text-sm font-medium text-purple-700">Total Time on Website</span>
+                </div>
+                <p className="text-lg font-semibold text-gray-900">
+                  {formatDuration(activityData.total_time_seconds)}
+                </p>
+              </div>
+              
+              {/* Total Sessions */}
+              <div className="bg-gradient-to-r from-orange-50 to-orange-100 rounded-lg p-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <MonitorPlay className="w-5 h-5 text-orange-600" />
+                  <span className="text-sm font-medium text-orange-700">Total Sessions</span>
+                </div>
+                <p className="text-lg font-semibold text-gray-900">
+                  {activityData.total_sessions || 0}
+                </p>
+              </div>
+            </div>
+            
+            {/* Online Status */}
+            <div className="flex items-center gap-4 mb-6 p-4 bg-gray-50 rounded-lg">
+              <div className="flex items-center gap-2">
+                <Wifi className={`w-5 h-5 ${activityData.is_currently_active ? 'text-green-500' : 'text-gray-400'}`} />
+                <span className={`font-medium ${activityData.is_currently_active ? 'text-green-700' : 'text-gray-500'}`}>
+                  {activityData.is_currently_active ? 'Currently Online' : 'Offline'}
+                </span>
+                {activityData.is_currently_active && (
+                  <span className="ml-2 text-sm text-gray-500">
+                    (Session: {formatDuration(activityData.current_session_duration)})
+                  </span>
+                )}
+              </div>
+              <div className="ml-auto">
+                <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
+                  activityData.is_currently_active 
+                    ? 'bg-green-100 text-green-800' 
+                    : 'bg-gray-100 text-gray-800'
+                }`}>
+                  <span className={`w-2 h-2 rounded-full mr-2 ${
+                    activityData.is_currently_active ? 'bg-green-500 animate-pulse' : 'bg-gray-400'
+                  }`}></span>
+                  {activityData.is_currently_active ? 'Active' : 'Inactive'}
+                </span>
+              </div>
+            </div>
+
+            {/* Page Analytics */}
+            {activityData.page_analytics && activityData.page_analytics.length > 0 && (
+              <div className="mb-6">
+                <h3 className="text-lg font-semibold text-gray-800 mb-3 flex items-center gap-2">
+                  <Clock className="w-5 h-5 text-indigo-500" />
+                  Time Spent on Each Screen
+                </h3>
+                <div className="overflow-x-auto">
+                  <table className="min-w-full divide-y divide-gray-200">
+                    <thead className="bg-gray-50">
+                      <tr>
+                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Page</th>
+                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Time</th>
+                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Visits</th>
+                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Avg. Time/Visit</th>
+                      </tr>
+                    </thead>
+                    <tbody className="bg-white divide-y divide-gray-200">
+                      {activityData.page_analytics.map((page, index) => (
+                        <tr key={index} className="hover:bg-gray-50">
+                          <td className="px-4 py-3 whitespace-nowrap">
+                            <span className="text-sm font-medium text-gray-900">{formatPagePath(page.page_path)}</span>
+                            <span className="block text-xs text-gray-400">{page.page_path}</span>
+                          </td>
+                          <td className="px-4 py-3 whitespace-nowrap">
+                            <span className="text-sm text-gray-700">{formatDuration(page.total_seconds)}</span>
+                          </td>
+                          <td className="px-4 py-3 whitespace-nowrap">
+                            <span className="text-sm text-gray-700">{page.visit_count}</span>
+                          </td>
+                          <td className="px-4 py-3 whitespace-nowrap">
+                            <span className="text-sm text-gray-700">
+                              {formatDuration(Math.round(page.total_seconds / page.visit_count))}
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+
+            {/* Recent Sessions */}
+            {activityData.recent_sessions && activityData.recent_sessions.length > 0 && (
+              <div>
+                <h3 className="text-lg font-semibold text-gray-800 mb-3 flex items-center gap-2">
+                  <History className="w-5 h-5 text-indigo-500" />
+                  Recent Sessions
+                </h3>
+                <div className="space-y-2">
+                  {activityData.recent_sessions.map((session, index) => (
+                    <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center">
+                          <MonitorPlay className="w-5 h-5 text-indigo-600" />
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium text-gray-900">
+                            Session #{activityData.recent_sessions.length - index}
+                          </p>
+                          <p className="text-xs text-gray-500">
+                            {formatDate(session.started_at)}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-sm font-semibold text-gray-900">
+                          {formatDuration(session.duration_seconds)}
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          {session.pages_visited?.length || 0} pages viewed
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
@@ -518,7 +725,10 @@ const UserProfile = () => {
                     Internship
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Enrolled Date
+                    Registration Date & Time
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Time Since Registered
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Tasks
@@ -532,7 +742,25 @@ const UserProfile = () => {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {enrollments.map((enrollment, index) => (
+                {enrollments.map((enrollment, index) => {
+                  // Calculate time since registration
+                  const registeredAt = new Date(enrollment.enrolled_at);
+                  const now = new Date();
+                  const diffMs = now - registeredAt;
+                  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+                  const diffHours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                  const diffMins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+                  
+                  let timeSinceRegistered = '';
+                  if (diffDays > 0) {
+                    timeSinceRegistered = `${diffDays}d ${diffHours}h ago`;
+                  } else if (diffHours > 0) {
+                    timeSinceRegistered = `${diffHours}h ${diffMins}m ago`;
+                  } else {
+                    timeSinceRegistered = `${diffMins}m ago`;
+                  }
+                  
+                  return (
                   <tr
                     key={index}
                     className="hover:bg-gray-50 transition-colors"
@@ -545,6 +773,12 @@ const UserProfile = () => {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm text-gray-600">
                         {formatDate(enrollment.enrolled_at)}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex items-center gap-1 text-sm text-gray-600">
+                        <Clock className="w-4 h-4 text-blue-500" />
+                        {timeSinceRegistered}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -590,7 +824,8 @@ const UserProfile = () => {
                       </span>
                     </td>
                   </tr>
-                ))}
+                  );
+                })}
               </tbody>
             </table>
           ) : (

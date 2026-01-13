@@ -733,6 +733,241 @@ def get_user_enrollments(user_id):
         traceback.print_exc()
         return jsonify({'error': str(e)}), 500
 
+
+# ==================== ACTIVITY TRACKING ENDPOINTS ====================
+
+# File-based storage for user activity
+ACTIVITY_FILE = Path('user_activity.json')
+
+def load_activity_data():
+    """Load activity data from JSON file"""
+    if ACTIVITY_FILE.exists():
+        try:
+            with open(ACTIVITY_FILE, 'r') as f:
+                return json.load(f)
+        except:
+            return {}
+    return {}
+
+def save_activity_data(data):
+    """Save activity data to JSON file"""
+    with open(ACTIVITY_FILE, 'w') as f:
+        json.dump(data, f, indent=2)
+
+# Load activity data on startup
+user_activity_data = load_activity_data()
+
+@app.route('/activity/track', methods=['POST'])
+def track_activity():
+    """Track user activity events"""
+    try:
+        data = request.json
+        user_id = data.get('user_id')
+        event_type = data.get('event_type')
+        timestamp = data.get('timestamp')
+        
+        if not user_id:
+            return jsonify({'error': 'Missing user_id'}), 400
+        
+        # Initialize user activity record if not exists
+        if user_id not in user_activity_data:
+            user_activity_data[user_id] = {
+                'user_id': user_id,
+                'user_email': data.get('user_email'),
+                'user_name': data.get('user_name'),
+                'first_seen': timestamp,
+                'last_seen': timestamp,
+                'total_session_time': 0,
+                'total_active_time': 0,
+                'sessions': [],
+                'page_visits': [],
+                'current_session': None
+            }
+        
+        user_data = user_activity_data[user_id]
+        user_data['last_seen'] = timestamp
+        
+        if event_type == 'session_start':
+            # Start a new session
+            session_data = {
+                'session_id': str(uuid.uuid4()),
+                'started_at': timestamp,
+                'ended_at': None,
+                'duration_seconds': 0,
+                'pages_visited': []
+            }
+            user_data['current_session'] = session_data
+            
+        elif event_type == 'heartbeat':
+            # Update current session duration
+            if user_data.get('current_session'):
+                session_duration = data.get('session_duration', 0)
+                user_data['current_session']['duration_seconds'] = session_duration
+                
+        elif event_type == 'session_end':
+            # End current session
+            if user_data.get('current_session'):
+                session = user_data['current_session']
+                session['ended_at'] = timestamp
+                session['duration_seconds'] = data.get('session_duration', 0)
+                user_data['sessions'].append(session)
+                user_data['total_session_time'] += session['duration_seconds']
+                user_data['current_session'] = None
+                
+        elif event_type == 'page_view':
+            # Track page view
+            page_visit = {
+                'page_path': data.get('page_path'),
+                'visited_at': timestamp
+            }
+            if user_data.get('current_session'):
+                user_data['current_session']['pages_visited'].append(page_visit)
+        
+        save_activity_data(user_activity_data)
+        return jsonify({'status': 'success'}), 200
+        
+    except Exception as e:
+        print(f"Error tracking activity: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/activity/page-duration', methods=['POST'])
+def track_page_duration():
+    """Track duration spent on a specific page"""
+    try:
+        data = request.json
+        user_id = data.get('user_id')
+        page_path = data.get('page_path')
+        duration_seconds = data.get('duration_seconds', 0)
+        started_at = data.get('started_at')
+        ended_at = data.get('ended_at')
+        
+        if not user_id:
+            return jsonify({'error': 'Missing user_id'}), 400
+        
+        if user_id not in user_activity_data:
+            user_activity_data[user_id] = {
+                'user_id': user_id,
+                'page_visits': [],
+                'sessions': [],
+                'total_session_time': 0
+            }
+        
+        # Add page visit with duration
+        page_visit = {
+            'page_path': page_path,
+            'duration_seconds': duration_seconds,
+            'started_at': started_at,
+            'ended_at': ended_at
+        }
+        
+        user_activity_data[user_id]['page_visits'].append(page_visit)
+        save_activity_data(user_activity_data)
+        
+        return jsonify({'status': 'success'}), 200
+        
+    except Exception as e:
+        print(f"Error tracking page duration: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/activity/session-end', methods=['POST'])
+def handle_session_end():
+    """Handle session end via sendBeacon"""
+    try:
+        # sendBeacon sends data as text/plain
+        data = request.get_json(force=True) if request.is_json else json.loads(request.data.decode('utf-8'))
+        user_id = data.get('user_id')
+        
+        if not user_id or user_id not in user_activity_data:
+            return jsonify({'status': 'ok'}), 200
+        
+        user_data = user_activity_data[user_id]
+        
+        # End current session
+        if user_data.get('current_session'):
+            session = user_data['current_session']
+            session['ended_at'] = data.get('timestamp')
+            session['duration_seconds'] = data.get('session_duration', 0)
+            user_data['sessions'].append(session)
+            user_data['total_session_time'] += session['duration_seconds']
+            user_data['current_session'] = None
+        
+        # Track last page duration
+        if data.get('last_page') and data.get('last_page_duration'):
+            page_visit = {
+                'page_path': data.get('last_page'),
+                'duration_seconds': data.get('last_page_duration'),
+                'ended_at': data.get('timestamp')
+            }
+            user_data['page_visits'].append(page_visit)
+        
+        user_data['last_seen'] = data.get('timestamp')
+        save_activity_data(user_activity_data)
+        
+        return jsonify({'status': 'success'}), 200
+        
+    except Exception as e:
+        print(f"Error handling session end: {e}")
+        return jsonify({'status': 'ok'}), 200
+
+
+@app.route('/admin/user/<user_id>/activity', methods=['GET'])
+def get_user_activity(user_id):
+    """Get user activity data for admin view"""
+    try:
+        activity = user_activity_data.get(user_id, {})
+        
+        # Calculate aggregated stats
+        total_sessions = len(activity.get('sessions', []))
+        total_time = activity.get('total_session_time', 0)
+        
+        # Add current session time if active
+        if activity.get('current_session'):
+            current_duration = activity['current_session'].get('duration_seconds', 0)
+            total_time += current_duration
+        
+        # Group page visits by path and calculate total time per page
+        page_time_map = {}
+        for visit in activity.get('page_visits', []):
+            path = visit.get('page_path', 'Unknown')
+            duration = visit.get('duration_seconds', 0)
+            if path in page_time_map:
+                page_time_map[path]['total_seconds'] += duration
+                page_time_map[path]['visit_count'] += 1
+            else:
+                page_time_map[path] = {
+                    'page_path': path,
+                    'total_seconds': duration,
+                    'visit_count': 1
+                }
+        
+        page_analytics = list(page_time_map.values())
+        page_analytics.sort(key=lambda x: x['total_seconds'], reverse=True)
+        
+        # Get recent sessions (last 10)
+        recent_sessions = activity.get('sessions', [])[-10:]
+        recent_sessions.reverse()
+        
+        return jsonify({
+            'user_id': user_id,
+            'first_seen': activity.get('first_seen'),
+            'last_seen': activity.get('last_seen'),
+            'total_sessions': total_sessions,
+            'total_time_seconds': total_time,
+            'is_currently_active': activity.get('current_session') is not None,
+            'current_session_duration': activity.get('current_session', {}).get('duration_seconds', 0) if activity.get('current_session') else 0,
+            'page_analytics': page_analytics[:10],  # Top 10 pages
+            'recent_sessions': recent_sessions
+        }), 200
+        
+    except Exception as e:
+        print(f"Error getting user activity: {e}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': str(e)}), 500
+
+
 @app.route('/')
 def index():
     return '''
