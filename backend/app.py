@@ -82,9 +82,12 @@ def add_security_headers(response):
     return response
 
 # Supabase Configuration
-SUPABASE_URL = os.getenv("SUPABASE_URL"),
+SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_ANON_KEY = os.getenv("SUPABASE_ANON_KEY")
 SUPABASE_SERVICE_ROLE_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY")
+print(type(SUPABASE_URL), SUPABASE_URL)
+print(type(SUPABASE_ANON_KEY), len(SUPABASE_ANON_KEY or ""))
+
 try:
     # Create two clients:
     # 1. Anon client for reads (respects RLS)
