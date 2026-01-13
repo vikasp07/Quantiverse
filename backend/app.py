@@ -37,9 +37,9 @@ CORS(app,
      resources={r"/*": {
          "origins": [
              "http://localhost:5173",
-             "https://quantiverse-frontend-wepz.onrender.com/"
+             "https://quantiverse-frontend-wepz.onrender.com"
          ],
-         "methods": ["GET", "POST", "OPTIONS", "PUT", "DELETE"],
+         "methods": ["GET", "POST", "OPTIONS", "PUT", "DELETE", "PATCH"],
          "allow_headers": ["Content-Type", "Authorization"],
          "supports_credentials": True
      }})
