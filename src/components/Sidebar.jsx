@@ -118,7 +118,7 @@ const Sidebar = () => {
         <div className="space-y-1">
           {menuItems.map((item, index) => {
             const isActive = location.pathname === item.path || 
-              (item.path !== "/home" && location.pathname.startsWith(item.path));
+              (item.path !== "/internship" && location.pathname.startsWith(item.path));
             
             return (
               <button
