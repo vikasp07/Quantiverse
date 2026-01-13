@@ -74,16 +74,16 @@ const Sidebar = () => {
   }
 
   const userMenuItems = [
-    { icon: Target, label: "Mock Interview", path: "/home" },
-    { icon: BookOpen, label: "Preparation Hub", path: "/preparation-hub" },
+    //{ icon: Target, label: "Mock Interview", path: "/home" },
+    //{ icon: BookOpen, label: "Preparation Hub", path: "/preparation-hub" },
     { icon: Briefcase, label: "Internships", path: "/internship" },
-    { icon: FileText, label: "Resume Builder", path: "/land" },
-    { icon: Layers, label: "Document Center", path: "/document-center" },
-    { icon: Scan, label: "ATS Scanner", path: "/ats-checker" },
+    //{ icon: FileText, label: "Resume Builder", path: "/land" },
+    //{ icon: Layers, label: "Document Center", path: "/document-center" },
+    //{ icon: Scan, label: "ATS Scanner", path: "/ats-checker" },
   ];
 
   const adminMenuItems = [
-    { icon: PlusCircle, label: "Question Bank", path: "/admin" },
+    // { icon: PlusCircle, label: "Question Bank", path: "/admin" }, // Disabled
     { icon: Check, label: "Task Confirmation", path: "/confirmation" },
     { icon: GraduationCap, label: "Manage Internships", path: "/edit-internship" },
   ];

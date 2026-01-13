@@ -1,1 +1,982 @@
-{}
+{
+  "1d192c17-624e-4aee-bdf5-56bdd348c658": {
+    "user_id": "1d192c17-624e-4aee-bdf5-56bdd348c658",
+    "user_email": "atharvachawrekar27@gmail.com",
+    "user_name": "Atharva C",
+    "first_seen": "2026-01-13T06:57:08.540Z",
+    "last_seen": "2026-01-13T07:23:33.660Z",
+    "total_session_time": 1088,
+    "total_active_time": 0,
+    "sessions": [
+      {
+        "session_id": "9d66c9fb-1652-4764-a12a-365b221f454f",
+        "started_at": "2026-01-13T06:57:08.540Z",
+        "ended_at": "2026-01-13T06:57:08.545Z",
+        "duration_seconds": 0,
+        "pages_visited": []
+      },
+      {
+        "session_id": "7572418c-ba3b-42e1-a49b-06b90510d561",
+        "started_at": "2026-01-13T06:57:08.546Z",
+        "ended_at": "2026-01-13T06:57:08.554Z",
+        "duration_seconds": 0,
+        "pages_visited": []
+      },
+      {
+        "session_id": "720dbdc4-691c-4af7-afa8-af2a3c470413",
+        "started_at": "2026-01-13T06:57:08.555Z",
+        "ended_at": "2026-01-13T06:57:08.559Z",
+        "duration_seconds": 0,
+        "pages_visited": [
+          {
+            "page_path": "/signup",
+            "visited_at": "2026-01-13T06:57:08.555Z"
+          }
+        ]
+      },
+      {
+        "session_id": "88f6a07d-24bc-4b51-8814-cc9cfe023929",
+        "started_at": "2026-01-13T06:57:08.560Z",
+        "ended_at": "2026-01-13T06:57:08.563Z",
+        "duration_seconds": 0,
+        "pages_visited": [
+          {
+            "page_path": "/signup",
+            "visited_at": "2026-01-13T06:57:08.560Z"
+          }
+        ]
+      },
+      {
+        "session_id": "fc695610-74d3-4e51-9389-b8cee5ca7f8c",
+        "started_at": "2026-01-13T06:57:14.589Z",
+        "ended_at": "2026-01-13T06:57:14.588Z",
+        "duration_seconds": 6,
+        "pages_visited": []
+      },
+      {
+        "session_id": "a37bf4ec-ba08-437f-861b-4d31bdda9e32",
+        "started_at": "2026-01-13T06:57:25.949Z",
+        "ended_at": "2026-01-13T06:57:27.319Z",
+        "duration_seconds": 1,
+        "pages_visited": [
+          {
+            "page_path": "/signin",
+            "visited_at": "2026-01-13T06:57:25.950Z"
+          }
+        ]
+      },
+      {
+        "session_id": "9159d45e-9865-4504-a116-1a225928268d",
+        "started_at": "2026-01-13T06:57:31.345Z",
+        "ended_at": "2026-01-13T06:57:31.344Z",
+        "duration_seconds": 4,
+        "pages_visited": []
+      },
+      {
+        "session_id": "4a652654-8c51-4788-baf0-6ba0188e81e4",
+        "started_at": "2026-01-13T06:57:33.255Z",
+        "ended_at": "2026-01-13T06:57:33.254Z",
+        "duration_seconds": 1,
+        "pages_visited": []
+      },
+      {
+        "session_id": "ee6e5190-892c-481d-8037-6f2e3e36d34f",
+        "started_at": "2026-01-13T06:58:09.712Z",
+        "ended_at": "2026-01-13T06:58:09.711Z",
+        "duration_seconds": 2,
+        "pages_visited": []
+      },
+      {
+        "session_id": "703ddb39-a521-4df3-9874-ad6fdb6bc785",
+        "started_at": "2026-01-13T06:59:45.712Z",
+        "ended_at": "2026-01-13T07:00:06.615Z",
+        "duration_seconds": 20,
+        "pages_visited": [
+          {
+            "page_path": "/confirmation",
+            "visited_at": "2026-01-13T06:59:45.712Z"
+          }
+        ]
+      },
+      {
+        "session_id": "47605d44-a53d-4d3e-ade0-8c5c6ef18a07",
+        "started_at": "2026-01-13T07:00:35.362Z",
+        "ended_at": "2026-01-13T07:00:35.360Z",
+        "duration_seconds": 28,
+        "pages_visited": []
+      },
+      {
+        "session_id": "eed90765-bbcd-45b3-8abb-e0b20ed93d6e",
+        "started_at": "2026-01-13T07:00:37.793Z",
+        "ended_at": "2026-01-13T07:04:12.426Z",
+        "duration_seconds": 214,
+        "pages_visited": [
+          {
+            "page_path": "/confirmation",
+            "visited_at": "2026-01-13T07:00:37.793Z"
+          }
+        ]
+      },
+      {
+        "session_id": "d7207add-4e22-412f-9791-a5f1a9ebb9d7",
+        "started_at": "2026-01-13T07:04:18.067Z",
+        "ended_at": "2026-01-13T07:04:18.066Z",
+        "duration_seconds": 5,
+        "pages_visited": []
+      },
+      {
+        "session_id": "4da2600c-ff2a-418b-ade0-dee2dfbfd504",
+        "started_at": "2026-01-13T07:05:36.268Z",
+        "ended_at": "2026-01-13T07:05:39.539Z",
+        "duration_seconds": 3,
+        "pages_visited": [
+          {
+            "page_path": "/confirmation",
+            "visited_at": "2026-01-13T07:05:36.269Z"
+          }
+        ]
+      },
+      {
+        "session_id": "efb52010-e058-4ced-bc8a-db3cd323e380",
+        "started_at": "2026-01-13T07:05:39.539Z",
+        "ended_at": "2026-01-13T07:05:41.706Z",
+        "duration_seconds": 2,
+        "pages_visited": [
+          {
+            "page_path": "/confirmation",
+            "visited_at": "2026-01-13T07:05:39.540Z"
+          }
+        ]
+      },
+      {
+        "session_id": "5bc7a887-47c2-40e6-8568-d1097554ea87",
+        "started_at": "2026-01-13T07:05:41.706Z",
+        "ended_at": "2026-01-13T07:06:31.743Z",
+        "duration_seconds": 50,
+        "pages_visited": [
+          {
+            "page_path": "/confirmation",
+            "visited_at": "2026-01-13T07:05:41.707Z"
+          }
+        ]
+      },
+      {
+        "session_id": "147355d6-4650-4d2f-9fa5-a51185831815",
+        "started_at": "2026-01-13T07:06:31.743Z",
+        "ended_at": "2026-01-13T07:06:34.076Z",
+        "duration_seconds": 2,
+        "pages_visited": [
+          {
+            "page_path": "/confirmation",
+            "visited_at": "2026-01-13T07:06:31.744Z"
+          }
+        ]
+      },
+      {
+        "session_id": "47f62a40-a1df-43a5-9d6f-a5f6f0c1a519",
+        "started_at": "2026-01-13T07:07:07.480Z",
+        "ended_at": "2026-01-13T07:07:07.480Z",
+        "duration_seconds": 33,
+        "pages_visited": []
+      },
+      {
+        "session_id": "01e7c0c7-6d0c-47b8-9ec8-a2c983cb4387",
+        "started_at": "2026-01-13T07:09:45.179Z",
+        "ended_at": "2026-01-13T07:18:12.709Z",
+        "duration_seconds": 507,
+        "pages_visited": [
+          {
+            "page_path": "/confirmation",
+            "visited_at": "2026-01-13T07:09:45.180Z"
+          }
+        ]
+      },
+      {
+        "session_id": "cc990190-3b0e-42ac-9562-34ca79d82ab7",
+        "started_at": "2026-01-13T07:18:12.710Z",
+        "ended_at": "2026-01-13T07:18:13.866Z",
+        "duration_seconds": 1,
+        "pages_visited": [
+          {
+            "page_path": "/confirmation",
+            "visited_at": "2026-01-13T07:18:12.711Z"
+          }
+        ]
+      },
+      {
+        "session_id": "0f95698c-5b91-4654-ad75-dde5193af4f1",
+        "started_at": "2026-01-13T07:19:04.829Z",
+        "ended_at": "2026-01-13T07:19:04.828Z",
+        "duration_seconds": 0,
+        "pages_visited": [
+          {
+            "page_path": "/confirmation",
+            "visited_at": "2026-01-13T07:19:04.830Z"
+          },
+          {
+            "page_path": "/confirmation",
+            "visited_at": "2026-01-13T07:19:04.826Z"
+          }
+        ]
+      },
+      {
+        "session_id": "4b1987fe-2873-4b68-9b84-14a826317643",
+        "started_at": "2026-01-13T07:19:04.871Z",
+        "ended_at": "2026-01-13T07:19:04.895Z",
+        "duration_seconds": 0,
+        "pages_visited": [
+          {
+            "page_path": "/confirmation",
+            "visited_at": "2026-01-13T07:19:04.872Z"
+          }
+        ]
+      },
+      {
+        "session_id": "caf06b53-96c7-4f4a-ab29-1e4d9cdcb32b",
+        "started_at": "2026-01-13T07:19:04.897Z",
+        "ended_at": "2026-01-13T07:19:04.918Z",
+        "duration_seconds": 0,
+        "pages_visited": [
+          {
+            "page_path": "/confirmation",
+            "visited_at": "2026-01-13T07:19:04.898Z"
+          }
+        ]
+      },
+      {
+        "session_id": "fd74dd72-6e42-4d0c-836c-37fb47d6c656",
+        "started_at": "2026-01-13T07:21:27.922Z",
+        "ended_at": "2026-01-13T07:21:27.926Z",
+        "duration_seconds": 0,
+        "pages_visited": [
+          {
+            "page_path": "/",
+            "visited_at": "2026-01-13T07:21:27.925Z"
+          }
+        ]
+      },
+      {
+        "session_id": "8d46bfc8-73a1-4c6b-aa9c-37a1c4eddf60",
+        "started_at": "2026-01-13T07:21:27.927Z",
+        "ended_at": "2026-01-13T07:21:27.941Z",
+        "duration_seconds": 0,
+        "pages_visited": []
+      },
+      {
+        "session_id": "6ee98cdc-88ae-44d8-89b5-056e41621bce",
+        "started_at": "2026-01-13T07:21:27.942Z",
+        "ended_at": "2026-01-13T07:21:27.949Z",
+        "duration_seconds": 0,
+        "pages_visited": [
+          {
+            "page_path": "/signup",
+            "visited_at": "2026-01-13T07:21:27.944Z"
+          },
+          {
+            "page_path": "/",
+            "visited_at": "2026-01-13T07:21:27.927Z"
+          }
+        ]
+      },
+      {
+        "session_id": "512bd7f6-e993-4647-a8d8-87b30a726eaa",
+        "started_at": "2026-01-13T07:21:27.950Z",
+        "ended_at": "2026-01-13T07:21:27.973Z",
+        "duration_seconds": 0,
+        "pages_visited": [
+          {
+            "page_path": "/signup",
+            "visited_at": "2026-01-13T07:21:27.950Z"
+          }
+        ]
+      },
+      {
+        "session_id": "a38d6eb0-620f-47a9-85e9-f4d9e722c443",
+        "started_at": "2026-01-13T07:21:27.973Z",
+        "ended_at": "2026-01-13T07:21:27.980Z",
+        "duration_seconds": 0,
+        "pages_visited": [
+          {
+            "page_path": "/signup",
+            "visited_at": "2026-01-13T07:21:27.974Z"
+          }
+        ]
+      },
+      {
+        "session_id": "b48c5715-4c6b-4e20-8932-78014208c4b1",
+        "started_at": "2026-01-13T07:21:27.980Z",
+        "ended_at": "2026-01-13T07:21:27.985Z",
+        "duration_seconds": 143,
+        "pages_visited": [
+          {
+            "page_path": "/signup",
+            "visited_at": "2026-01-13T07:21:27.981Z"
+          }
+        ]
+      },
+      {
+        "session_id": "363fb40b-b54e-4d6d-b735-196f958559b8",
+        "started_at": "2026-01-13T07:21:27.986Z",
+        "ended_at": "2026-01-13T07:21:28.979Z",
+        "duration_seconds": 0,
+        "pages_visited": [
+          {
+            "page_path": "/confirmation",
+            "visited_at": "2026-01-13T07:21:27.988Z"
+          }
+        ]
+      },
+      {
+        "session_id": "1f3b1b53-22f3-44a2-b912-20bef4fec920",
+        "started_at": "2026-01-13T07:21:29.022Z",
+        "ended_at": "2026-01-13T07:21:29.451Z",
+        "duration_seconds": 0,
+        "pages_visited": [
+          {
+            "page_path": "/signup",
+            "visited_at": "2026-01-13T07:21:29.023Z"
+          }
+        ]
+      },
+      {
+        "session_id": "383993f4-d7c2-4645-b98c-7e73015b824b",
+        "started_at": "2026-01-13T07:21:29.452Z",
+        "ended_at": "2026-01-13T07:21:29.453Z",
+        "duration_seconds": 0,
+        "pages_visited": [
+          {
+            "page_path": "/confirmation",
+            "visited_at": "2026-01-13T07:21:29.452Z"
+          },
+          {
+            "page_path": "/signup",
+            "visited_at": "2026-01-13T07:21:29.452Z"
+          }
+        ]
+      },
+      {
+        "session_id": "0a6453c1-437b-415e-9a90-0a3d8f3dc0de",
+        "started_at": "2026-01-13T07:21:29.453Z",
+        "ended_at": "2026-01-13T07:21:29.473Z",
+        "duration_seconds": 0,
+        "pages_visited": [
+          {
+            "page_path": "/confirmation",
+            "visited_at": "2026-01-13T07:21:29.454Z"
+          }
+        ]
+      },
+      {
+        "session_id": "116a0ff5-eb61-4560-89bc-26ad809541dc",
+        "started_at": "2026-01-13T07:21:29.474Z",
+        "ended_at": "2026-01-13T07:21:29.485Z",
+        "duration_seconds": 0,
+        "pages_visited": [
+          {
+            "page_path": "/confirmation",
+            "visited_at": "2026-01-13T07:21:29.475Z"
+          }
+        ]
+      },
+      {
+        "session_id": "387953e5-335a-4377-9705-5bfde3450d03",
+        "started_at": "2026-01-13T07:21:29.485Z",
+        "ended_at": "2026-01-13T07:21:29.494Z",
+        "duration_seconds": 0,
+        "pages_visited": [
+          {
+            "page_path": "/confirmation",
+            "visited_at": "2026-01-13T07:21:29.485Z"
+          }
+        ]
+      },
+      {
+        "session_id": "ff492a72-967d-4101-a247-3dcae9a31ff6",
+        "started_at": "2026-01-13T07:21:29.495Z",
+        "ended_at": "2026-01-13T07:22:03.407Z",
+        "duration_seconds": 33,
+        "pages_visited": [
+          {
+            "page_path": "/confirmation",
+            "visited_at": "2026-01-13T07:21:29.495Z"
+          }
+        ]
+      },
+      {
+        "session_id": "5efda8e4-4d0e-4ffc-bd78-602afa58c759",
+        "started_at": "2026-01-13T07:22:03.408Z",
+        "ended_at": "2026-01-13T07:22:03.422Z",
+        "duration_seconds": 33,
+        "pages_visited": [
+          {
+            "page_path": "/signup",
+            "visited_at": "2026-01-13T07:22:03.412Z"
+          }
+        ]
+      }
+    ],
+    "page_visits": [
+      {
+        "page_path": "/signup",
+        "duration_seconds": 0,
+        "started_at": "2026-01-13T06:57:14.589Z",
+        "ended_at": "2026-01-13T06:57:14.589Z"
+      },
+      {
+        "page_path": "/signin",
+        "duration_seconds": 0,
+        "started_at": "2026-01-13T06:57:27.319Z",
+        "ended_at": "2026-01-13T06:57:27.320Z"
+      },
+      {
+        "page_path": "/admin",
+        "duration_seconds": 0,
+        "started_at": "2026-01-13T06:57:31.345Z",
+        "ended_at": "2026-01-13T06:57:31.345Z"
+      },
+      {
+        "page_path": "/confirmation",
+        "duration_seconds": 0,
+        "started_at": "2026-01-13T06:57:33.255Z",
+        "ended_at": "2026-01-13T06:57:33.256Z"
+      },
+      {
+        "page_path": "/admin",
+        "duration_seconds": 0,
+        "started_at": "2026-01-13T06:58:06.933Z",
+        "ended_at": "2026-01-13T06:58:06.934Z"
+      },
+      {
+        "page_path": "/edit-internship",
+        "duration_seconds": 0,
+        "started_at": "2026-01-13T06:58:09.712Z",
+        "ended_at": "2026-01-13T06:58:09.712Z"
+      },
+      {
+        "page_path": "/confirmation",
+        "duration_seconds": 1,
+        "ended_at": "2026-01-13T07:18:13.866Z"
+      },
+      {
+        "page_path": "/",
+        "duration_seconds": 0,
+        "started_at": "2026-01-13T07:21:27.942Z",
+        "ended_at": "2026-01-13T07:21:27.943Z"
+      }
+    ],
+    "current_session": {
+      "session_id": "c418217b-42f9-4768-ab11-424b2d636240",
+      "started_at": "2026-01-13T07:22:03.423Z",
+      "ended_at": null,
+      "duration_seconds": 90,
+      "pages_visited": [
+        {
+          "page_path": "/confirmation",
+          "visited_at": "2026-01-13T07:22:03.423Z"
+        }
+      ]
+    }
+  },
+  "d4f54d49-7ba2-4aa1-8dbf-4eada49c146a": {
+    "user_id": "d4f54d49-7ba2-4aa1-8dbf-4eada49c146a",
+    "user_email": "chawrekaratharva@gmail.com",
+    "user_name": "atharva",
+    "first_seen": "2026-01-13T06:59:14.189Z",
+    "last_seen": "2026-01-13T07:23:26.665Z",
+    "total_session_time": 930,
+    "total_active_time": 0,
+    "sessions": [
+      {
+        "session_id": "02411f14-6d01-4790-846e-7afc0e2f3a57",
+        "started_at": "2026-01-13T06:59:14.189Z",
+        "ended_at": "2026-01-13T06:59:14.193Z",
+        "duration_seconds": 0,
+        "pages_visited": [
+          {
+            "page_path": "/signin",
+            "visited_at": "2026-01-13T06:59:14.192Z"
+          }
+        ]
+      },
+      {
+        "session_id": "ee44cca3-4c56-4b4b-a4f0-6a06edfd7fda",
+        "started_at": "2026-01-13T06:59:15.686Z",
+        "ended_at": "2026-01-13T06:59:15.685Z",
+        "duration_seconds": 1,
+        "pages_visited": []
+      },
+      {
+        "session_id": "cad83016-bce4-4705-99bf-9d4c26f8454d",
+        "started_at": "2026-01-13T06:59:46.462Z",
+        "ended_at": "2026-01-13T07:00:05.346Z",
+        "duration_seconds": 18,
+        "pages_visited": [
+          {
+            "page_path": "/home",
+            "visited_at": "2026-01-13T06:59:46.463Z"
+          }
+        ]
+      },
+      {
+        "session_id": "b21d626c-7ea2-4652-952b-786019c56cc2",
+        "started_at": "2026-01-13T07:00:05.346Z",
+        "ended_at": "2026-01-13T07:00:08.181Z",
+        "duration_seconds": 2,
+        "pages_visited": [
+          {
+            "page_path": "/home",
+            "visited_at": "2026-01-13T07:00:05.347Z"
+          }
+        ]
+      },
+      {
+        "session_id": "c4c2fe90-fba2-45fa-8328-2a6f78dee1e3",
+        "started_at": "2026-01-13T07:00:08.182Z",
+        "ended_at": "2026-01-13T07:00:33.772Z",
+        "duration_seconds": 25,
+        "pages_visited": [
+          {
+            "page_path": "/home",
+            "visited_at": "2026-01-13T07:00:08.183Z"
+          }
+        ]
+      },
+      {
+        "session_id": "d1456907-2e01-474c-893f-dbdbe268381a",
+        "started_at": "2026-01-13T07:00:37.187Z",
+        "ended_at": "2026-01-13T07:00:37.186Z",
+        "duration_seconds": 3,
+        "pages_visited": []
+      },
+      {
+        "session_id": "0d5584e3-bdc7-4a86-be70-3eba6cca2f18",
+        "started_at": "2026-01-13T07:00:38.074Z",
+        "ended_at": "2026-01-13T07:04:16.531Z",
+        "duration_seconds": 218,
+        "pages_visited": [
+          {
+            "page_path": "/home",
+            "visited_at": "2026-01-13T07:00:38.074Z"
+          }
+        ]
+      },
+      {
+        "session_id": "3b8f6653-36e8-46a2-873d-5b0e9d520e6b",
+        "started_at": "2026-01-13T07:04:16.531Z",
+        "ended_at": "2026-01-13T07:05:37.468Z",
+        "duration_seconds": 80,
+        "pages_visited": [
+          {
+            "page_path": "/home",
+            "visited_at": "2026-01-13T07:04:16.532Z"
+          }
+        ]
+      },
+      {
+        "session_id": "76ad21b6-f563-43d9-b8dd-cbcb18db6c01",
+        "started_at": "2026-01-13T07:05:37.469Z",
+        "ended_at": "2026-01-13T07:05:40.353Z",
+        "duration_seconds": 2,
+        "pages_visited": [
+          {
+            "page_path": "/home",
+            "visited_at": "2026-01-13T07:05:37.470Z"
+          }
+        ]
+      },
+      {
+        "session_id": "13b61cd0-d215-4be0-808c-761430997cc9",
+        "started_at": "2026-01-13T07:06:33.044Z",
+        "ended_at": "2026-01-13T07:06:33.043Z",
+        "duration_seconds": 52,
+        "pages_visited": []
+      },
+      {
+        "session_id": "bb895459-41ba-42ad-a731-a60867f69a5f",
+        "started_at": "2026-01-13T07:09:47.489Z",
+        "ended_at": "2026-01-13T07:17:44.468Z",
+        "duration_seconds": 476,
+        "pages_visited": []
+      },
+      {
+        "session_id": "f4df1647-15c4-4ebb-9cd3-34d7830b0a01",
+        "started_at": "2026-01-13T07:17:44.469Z",
+        "ended_at": "2026-01-13T07:18:11.596Z",
+        "duration_seconds": 27,
+        "pages_visited": [
+          {
+            "page_path": "/home",
+            "visited_at": "2026-01-13T07:17:44.470Z"
+          }
+        ]
+      },
+      {
+        "session_id": "5cb025a7-c54c-479d-8cbb-fdf67e0c00d5",
+        "started_at": "2026-01-13T07:18:11.596Z",
+        "ended_at": "2026-01-13T07:18:17.575Z",
+        "duration_seconds": 5,
+        "pages_visited": [
+          {
+            "page_path": "/home",
+            "visited_at": "2026-01-13T07:18:11.597Z"
+          }
+        ]
+      },
+      {
+        "session_id": "39d0101b-d9fc-4246-9d9a-5ff3b0feebbe",
+        "started_at": "2026-01-13T07:18:17.575Z",
+        "ended_at": "2026-01-13T07:18:18.491Z",
+        "duration_seconds": 0,
+        "pages_visited": [
+          {
+            "page_path": "/home",
+            "visited_at": "2026-01-13T07:18:17.576Z"
+          }
+        ]
+      },
+      {
+        "session_id": "7510dc8e-fd2e-4ddb-b3ad-aa8b312407f7",
+        "started_at": "2026-01-13T07:21:15.138Z",
+        "ended_at": "2026-01-13T07:21:15.145Z",
+        "duration_seconds": 0,
+        "pages_visited": [
+          {
+            "page_path": "/home",
+            "visited_at": "2026-01-13T07:21:15.143Z"
+          }
+        ]
+      },
+      {
+        "session_id": "8fc2e88e-54c7-4856-95db-cb06001724fd",
+        "started_at": "2026-01-13T07:21:15.146Z",
+        "ended_at": "2026-01-13T07:21:15.157Z",
+        "duration_seconds": 0,
+        "pages_visited": [
+          {
+            "page_path": "/home",
+            "visited_at": "2026-01-13T07:21:15.147Z"
+          }
+        ]
+      },
+      {
+        "session_id": "5e37719e-f3a4-4aea-a1e3-efb62cc0e3ce",
+        "started_at": "2026-01-13T07:21:15.159Z",
+        "ended_at": "2026-01-13T07:21:15.165Z",
+        "duration_seconds": 0,
+        "pages_visited": [
+          {
+            "page_path": "/home",
+            "visited_at": "2026-01-13T07:21:15.160Z"
+          }
+        ]
+      },
+      {
+        "session_id": "23cda4f9-9b7e-47aa-bc48-40b668b74e26",
+        "started_at": "2026-01-13T07:21:15.166Z",
+        "ended_at": "2026-01-13T07:21:15.172Z",
+        "duration_seconds": 0,
+        "pages_visited": [
+          {
+            "page_path": "/home",
+            "visited_at": "2026-01-13T07:21:15.167Z"
+          }
+        ]
+      },
+      {
+        "session_id": "835b3e57-0a8e-485f-89a3-8913721f5d18",
+        "started_at": "2026-01-13T07:21:15.173Z",
+        "ended_at": "2026-01-13T07:21:32.256Z",
+        "duration_seconds": 0,
+        "pages_visited": [
+          {
+            "page_path": "/home",
+            "visited_at": "2026-01-13T07:21:15.174Z"
+          }
+        ]
+      },
+      {
+        "session_id": "c91e5d5e-742a-47f0-83df-ec3097d23377",
+        "started_at": "2026-01-13T07:21:32.477Z",
+        "ended_at": "2026-01-13T07:21:32.478Z",
+        "duration_seconds": 0,
+        "pages_visited": [
+          {
+            "page_path": "/home",
+            "visited_at": "2026-01-13T07:21:32.478Z"
+          }
+        ]
+      },
+      {
+        "session_id": "6fc2c68b-08d7-4695-bbeb-8710e24eadd2",
+        "started_at": "2026-01-13T07:21:32.479Z",
+        "ended_at": "2026-01-13T07:21:32.488Z",
+        "duration_seconds": 0,
+        "pages_visited": [
+          {
+            "page_path": "/home",
+            "visited_at": "2026-01-13T07:21:32.479Z"
+          }
+        ]
+      },
+      {
+        "session_id": "d7ba0b5a-bfcf-4035-b818-ec49520b85ab",
+        "started_at": "2026-01-13T07:21:32.489Z",
+        "ended_at": "2026-01-13T07:21:32.493Z",
+        "duration_seconds": 0,
+        "pages_visited": [
+          {
+            "page_path": "/home",
+            "visited_at": "2026-01-13T07:21:32.490Z"
+          }
+        ]
+      },
+      {
+        "session_id": "6a99b59d-e8f4-4f81-9fc4-f95c3568458b",
+        "started_at": "2026-01-13T07:21:32.493Z",
+        "ended_at": "2026-01-13T07:21:32.497Z",
+        "duration_seconds": 0,
+        "pages_visited": [
+          {
+            "page_path": "/home",
+            "visited_at": "2026-01-13T07:21:32.494Z"
+          }
+        ]
+      },
+      {
+        "session_id": "320c2d91-d135-4024-8ae8-3f6f66429501",
+        "started_at": "2026-01-13T07:21:32.497Z",
+        "ended_at": "2026-01-13T07:21:33.444Z",
+        "duration_seconds": 0,
+        "pages_visited": [
+          {
+            "page_path": "/home",
+            "visited_at": "2026-01-13T07:21:32.498Z"
+          }
+        ]
+      },
+      {
+        "session_id": "893eaec9-3961-4cbe-893c-4e50589c6d83",
+        "started_at": "2026-01-13T07:21:33.614Z",
+        "ended_at": "2026-01-13T07:21:33.616Z",
+        "duration_seconds": 0,
+        "pages_visited": [
+          {
+            "page_path": "/home",
+            "visited_at": "2026-01-13T07:21:33.615Z"
+          }
+        ]
+      },
+      {
+        "session_id": "3542e022-67b5-4aa5-8f6e-607f43b11bab",
+        "started_at": "2026-01-13T07:21:33.616Z",
+        "ended_at": "2026-01-13T07:21:33.622Z",
+        "duration_seconds": 0,
+        "pages_visited": []
+      },
+      {
+        "session_id": "d40f76cf-070c-4fbb-aeaf-c1bebb9f25ec",
+        "started_at": "2026-01-13T07:21:33.622Z",
+        "ended_at": "2026-01-13T07:21:33.626Z",
+        "duration_seconds": 0,
+        "pages_visited": [
+          {
+            "page_path": "/home",
+            "visited_at": "2026-01-13T07:21:33.623Z"
+          }
+        ]
+      },
+      {
+        "session_id": "4bd4ed62-c12c-4eb0-a495-99819f5ae2f8",
+        "started_at": "2026-01-13T07:21:33.626Z",
+        "ended_at": "2026-01-13T07:21:33.630Z",
+        "duration_seconds": 0,
+        "pages_visited": [
+          {
+            "page_path": "/home",
+            "visited_at": "2026-01-13T07:21:33.626Z"
+          }
+        ]
+      },
+      {
+        "session_id": "4727e41a-20d2-43ab-9c1c-bb6bf123e80a",
+        "started_at": "2026-01-13T07:21:33.631Z",
+        "ended_at": "2026-01-13T07:21:34.241Z",
+        "duration_seconds": 0,
+        "pages_visited": [
+          {
+            "page_path": "/home",
+            "visited_at": "2026-01-13T07:21:33.632Z"
+          }
+        ]
+      },
+      {
+        "session_id": "e6dd5b38-e3f0-4088-985c-21423f8ace5e",
+        "started_at": "2026-01-13T07:21:34.393Z",
+        "ended_at": "2026-01-13T07:21:34.394Z",
+        "duration_seconds": 0,
+        "pages_visited": [
+          {
+            "page_path": "/home",
+            "visited_at": "2026-01-13T07:21:34.394Z"
+          }
+        ]
+      },
+      {
+        "session_id": "6cb7cc3c-3838-4ba1-af9f-7ba0b57f8d2c",
+        "started_at": "2026-01-13T07:21:34.395Z",
+        "ended_at": "2026-01-13T07:21:34.399Z",
+        "duration_seconds": 0,
+        "pages_visited": [
+          {
+            "page_path": "/home",
+            "visited_at": "2026-01-13T07:21:34.395Z"
+          }
+        ]
+      },
+      {
+        "session_id": "9b690801-900b-49e5-b27a-a4c0f61f82f8",
+        "started_at": "2026-01-13T07:21:34.399Z",
+        "ended_at": "2026-01-13T07:21:34.411Z",
+        "duration_seconds": 0,
+        "pages_visited": [
+          {
+            "page_path": "/home",
+            "visited_at": "2026-01-13T07:21:34.408Z"
+          }
+        ]
+      },
+      {
+        "session_id": "e12d13a0-5266-4bf5-a664-3efed15516ee",
+        "started_at": "2026-01-13T07:21:34.411Z",
+        "ended_at": "2026-01-13T07:21:34.414Z",
+        "duration_seconds": 0,
+        "pages_visited": [
+          {
+            "page_path": "/home",
+            "visited_at": "2026-01-13T07:21:34.412Z"
+          }
+        ]
+      },
+      {
+        "session_id": "1cad2e18-92a1-41f4-acf3-0db4d5df3258",
+        "started_at": "2026-01-13T07:21:34.414Z",
+        "ended_at": "2026-01-13T07:21:41.291Z",
+        "duration_seconds": 6,
+        "pages_visited": [
+          {
+            "page_path": "/home",
+            "visited_at": "2026-01-13T07:21:34.415Z"
+          }
+        ]
+      },
+      {
+        "session_id": "78e81d5d-33a7-4d28-9a18-68aa8d182ff4",
+        "started_at": "2026-01-13T07:21:41.295Z",
+        "ended_at": "2026-01-13T07:21:41.298Z",
+        "duration_seconds": 0,
+        "pages_visited": [
+          {
+            "page_path": "/internship",
+            "visited_at": "2026-01-13T07:21:41.297Z"
+          }
+        ]
+      },
+      {
+        "session_id": "8b4ac9d2-c307-4481-8b9e-b17119ea22ad",
+        "started_at": "2026-01-13T07:21:41.298Z",
+        "ended_at": "2026-01-13T07:21:41.338Z",
+        "duration_seconds": 0,
+        "pages_visited": [
+          {
+            "page_path": "/internship",
+            "visited_at": "2026-01-13T07:21:41.304Z"
+          },
+          {
+            "page_path": "/home",
+            "visited_at": "2026-01-13T07:21:41.292Z"
+          }
+        ]
+      },
+      {
+        "session_id": "0caec9d4-5bbf-4a09-a5df-2df7c29f51c5",
+        "started_at": "2026-01-13T07:21:41.339Z",
+        "ended_at": "2026-01-13T07:21:41.360Z",
+        "duration_seconds": 0,
+        "pages_visited": [
+          {
+            "page_path": "/internship",
+            "visited_at": "2026-01-13T07:21:41.340Z"
+          }
+        ]
+      },
+      {
+        "session_id": "7cc2bfb9-fc7f-4349-bc71-840156f67204",
+        "started_at": "2026-01-13T07:21:41.360Z",
+        "ended_at": "2026-01-13T07:21:41.370Z",
+        "duration_seconds": 0,
+        "pages_visited": [
+          {
+            "page_path": "/internship",
+            "visited_at": "2026-01-13T07:21:41.361Z"
+          }
+        ]
+      },
+      {
+        "session_id": "407b53e5-3471-417f-8ae0-c2210fc8cdc3",
+        "started_at": "2026-01-13T07:21:41.371Z",
+        "ended_at": "2026-01-13T07:21:45.872Z",
+        "duration_seconds": 4,
+        "pages_visited": [
+          {
+            "page_path": "/internship",
+            "visited_at": "2026-01-13T07:21:41.372Z"
+          }
+        ]
+      },
+      {
+        "session_id": "e5d7d50e-2860-42db-96ec-85c9090a950b",
+        "started_at": "2026-01-13T07:21:52.852Z",
+        "ended_at": "2026-01-13T07:21:52.850Z",
+        "duration_seconds": 11,
+        "pages_visited": []
+      }
+    ],
+    "page_visits": [
+      {
+        "page_path": "/signin",
+        "duration_seconds": 0,
+        "started_at": "2026-01-13T06:59:15.686Z",
+        "ended_at": "2026-01-13T06:59:15.686Z"
+      },
+      {
+        "page_path": "/home",
+        "duration_seconds": 4,
+        "ended_at": "2026-01-13T07:21:45.872Z"
+      },
+      {
+        "page_path": "/internship",
+        "duration_seconds": 0,
+        "started_at": "2026-01-13T07:21:52.852Z",
+        "ended_at": "2026-01-13T07:21:52.853Z"
+      },
+      {
+        "page_path": "/progress",
+        "duration_seconds": 0,
+        "started_at": "2026-01-13T07:21:56.114Z",
+        "ended_at": "2026-01-13T07:21:56.116Z"
+      }
+    ],
+    "current_session": {
+      "session_id": "0fa6ce55-0d6b-4595-a070-09c1e280f455",
+      "started_at": "2026-01-13T07:21:56.114Z",
+      "ended_at": null,
+      "duration_seconds": 90,
+      "pages_visited": [
+        {
+          "page_path": "/internship",
+          "visited_at": "2026-01-13T07:21:56.116Z"
+        }
+      ]
+    }
+  }
+}

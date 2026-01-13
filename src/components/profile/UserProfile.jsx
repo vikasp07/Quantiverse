@@ -61,7 +61,7 @@ const UserProfile = () => {
   const [enrollments, setEnrollments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [activityData, setActivityData] = useState(null);
+  const [enrollmentActivityData, setActivityData] = useState(null);
   const [stats, setStats] = useState({
     totalEnrolled: 0,
     completed: 0,
