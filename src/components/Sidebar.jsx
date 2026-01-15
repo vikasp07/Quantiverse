@@ -46,9 +46,12 @@ const Sidebar = () => {
         .from("user_roles")
         .select("role")
         .eq("user_id", user.id)
-        .single();
+        .maybeSingle();
 
-      if (roleError || !roleData) {
+      if (roleError) {
+        console.error("Role fetch error:", roleError);
+        setRole("user");
+      } else if (!roleData) {
         setRole("user");
       } else {
         setRole(roleData.role);
