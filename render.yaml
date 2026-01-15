@@ -18,6 +18,7 @@ services:
   - type: web
     name: quantiverse-backend
     env: python
+    rootDir: ./backend
     pythonVersion: 3.11
     buildCommand: pip install -r requirements.txt
     startCommand: gunicorn app:app --bind 0.0.0.0:$PORT
