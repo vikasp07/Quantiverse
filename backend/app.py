@@ -31,19 +31,18 @@ app.config.update(
     SESSION_COOKIE_SAMESITE='Lax'     # Avoid CSRF in most common cases
 )
 
-# CORS Configuration
-
+# CORS Configuration - Allow frontend to access backend
 CORS(app,
-     resources={r"/*": {
-         "origins": [
-             "http://localhost:5173",
-             "https://quantiverse-front.onrender.com",
-             "https://quantiverse-frontend1.onrender.com"
-         ],
-         "methods": ["GET", "POST", "OPTIONS", "PUT", "DELETE", "PATCH"],
-         "allow_headers": ["Content-Type", "Authorization"],
-         "supports_credentials": True
-     }})
+     origins=[
+         "http://localhost:5173",
+         "https://quantiverse-front.onrender.com",
+         "https://quantiverse-frontend1.onrender.com"
+     ],
+     methods=["GET", "POST", "OPTIONS", "PUT", "DELETE", "PATCH"],
+     allow_headers=["Content-Type", "Authorization"],
+     supports_credentials=True,
+     expose_headers=["Content-Type"],
+     max_age=3600)
 
 # Security Headers Middleware
 @app.after_request
@@ -58,7 +57,7 @@ def add_security_headers(response):
         "style-src 'self' 'unsafe-inline'; "  # Allow inline styles
         "img-src 'self' data: https:; "  # Allow images from self, data URIs, and HTTPS
         "font-src 'self' data:; "
-        "connect-src 'self' http://localhost:5173 https://eplfwexdnkcwqdcqbgqq.supabase.co; "  # API calls
+        "connect-src 'self' http://localhost:5173 https://quantiverse-front.onrender.com https://quantiverse-frontend1.onrender.com https://eplfwexdnkcwqdcqbgqq.supabase.co; "  # API calls
         "frame-ancestors 'none'; "  # Prevent clickjacking
         "base-uri 'self'; "  # Restrict base tag
         "form-action 'self'; "  # Restrict form submissions
@@ -758,9 +757,11 @@ def save_activity_data(data):
 # Load activity data on startup
 user_activity_data = load_activity_data()
 
-@app.route('/activity/track', methods=['POST'])
+@app.route('/activity/track', methods=['POST', 'OPTIONS'])
 def track_activity():
     """Track user activity events"""
+    if request.method == 'OPTIONS':
+        return '', 200
     try:
         data = request.json
         user_id = data.get('user_id')
@@ -832,9 +833,11 @@ def track_activity():
         return jsonify({'error': str(e)}), 500
 
 
-@app.route('/activity/page-duration', methods=['POST'])
+@app.route('/activity/page-duration', methods=['POST', 'OPTIONS'])
 def track_page_duration():
     """Track duration spent on a specific page"""
+    if request.method == 'OPTIONS':
+        return '', 200
     try:
         data = request.json
         user_id = data.get('user_id')
@@ -872,9 +875,11 @@ def track_page_duration():
         return jsonify({'error': str(e)}), 500
 
 
-@app.route('/activity/session-end', methods=['POST'])
+@app.route('/activity/session-end', methods=['POST', 'OPTIONS'])
 def handle_session_end():
     """Handle session end via sendBeacon"""
+    if request.method == 'OPTIONS':
+        return '', 200
     try:
         # sendBeacon sends data as text/plain
         data = request.get_json(force=True) if request.is_json else json.loads(request.data.decode('utf-8'))
