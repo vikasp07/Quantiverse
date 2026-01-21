@@ -165,14 +165,14 @@ const Signin = () => {
 
   const validateEmail = (emailValue) => {
     if (!emailValue) {
-      setEmailError('');
+      setEmailError("");
       return true;
     }
     if (!emailRegex.test(emailValue)) {
-      setEmailError('Please enter a valid email address');
+      setEmailError("Please enter a valid email address");
       return false;
     }
-    setEmailError('');
+    setEmailError("");
     return true;
   };
 
@@ -242,27 +242,32 @@ const Signin = () => {
           return;
         }
 
-        // ✅ Fetch user role with error handling
+        // ✅ Check user role - first from metadata, then from user_roles table
         try {
+          // First check user_metadata
+          if (user.user_metadata?.role === "admin") {
+            navigate("/admin");
+            return;
+          }
+
+          // Fallback: query user_roles table
           const { data: roleData, error: roleError } = await supabase
             .from("user_roles")
             .select("role")
             .eq("user_id", user.id);
 
-          if (roleError) {
-            console.warn("Role fetch warning:", roleError);
-            // ✅ Default to 'internship' role if not found
-            navigate("/internship");
-            return;
-          }
-
-          if (roleData && roleData.length > 0 && roleData[0]?.role === "admin") {
+          if (
+            !roleError &&
+            roleData &&
+            roleData.length > 0 &&
+            roleData[0]?.role === "admin"
+          ) {
             navigate("/admin");
           } else {
             navigate("/internship");
           }
         } catch (roleErr) {
-          console.error("Role fetch error:", roleErr);
+          console.error("Role check error:", roleErr);
           navigate("/internship"); // ✅ Default fallback
         }
       } else {
@@ -317,8 +322,8 @@ const Signin = () => {
               placeholder="Email address"
               className={`w-full p-3 rounded-lg bg-emerald-50 border text-gray-800 placeholder-emerald-400 focus:outline-none focus:ring-2 transition-colors ${
                 emailError
-                  ? 'border-red-500 focus:ring-red-400'
-                  : 'border-emerald-200 focus:ring-emerald-400'
+                  ? "border-red-500 focus:ring-red-400"
+                  : "border-emerald-200 focus:ring-emerald-400"
               }`}
               required
             />

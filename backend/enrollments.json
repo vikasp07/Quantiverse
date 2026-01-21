@@ -758,5 +758,91 @@
         "completed": false
       }
     ]
+  },
+  {
+    "user_id": "b4c54906-4caf-4c44-bfd7-b5693c7eb247",
+    "user_name": "vikas",
+    "user_email": "vksmp07@gmail.com",
+    "internship_id": "45510087-5e12-4077-8dd3-2f9723cd9355",
+    "internship_name": "Frontend7",
+    "enrolled_at": "2026-01-14T09:34:24.412483",
+    "tasks": [
+      {
+        "task_id": "frontend_01",
+        "title": "UI Component Development",
+        "order": 1,
+        "description": "Create reusable UI components",
+        "completed": false
+      },
+      {
+        "task_id": "frontend_02",
+        "title": "State Management Setup",
+        "order": 2,
+        "description": "Implement state management with Redux",
+        "completed": false
+      },
+      {
+        "task_id": "frontend_03",
+        "title": "API Integration",
+        "order": 3,
+        "description": "Connect frontend with backend APIs",
+        "completed": false
+      },
+      {
+        "task_id": "frontend_04",
+        "title": "Responsive Design",
+        "order": 4,
+        "description": "Make application mobile responsive",
+        "completed": false
+      }
+    ]
+  },
+  {
+    "user_id": "b4c54906-4caf-4c44-bfd7-b5693c7eb247",
+    "user_name": "vikas",
+    "user_email": "vksmp07@gmail.com",
+    "internship_id": "6f6bd088-fcef-4d44-886e-13dab4f32381",
+    "internship_name": "InternShip",
+    "enrolled_at": "2026-01-14T10:00:01.995974",
+    "tasks": [
+      {
+        "task_id": "task_33e625c8-047c-4161-94d3-448f4273efb5",
+        "title": "Complete Internship",
+        "order": 1,
+        "completed": false
+      }
+    ]
+  },
+  {
+    "user_id": "b4c54906-4caf-4c44-bfd7-b5693c7eb247",
+    "user_name": "vikas",
+    "user_email": "vksmp07@gmail.com",
+    "internship_id": "16310d14-d5d5-47c9-8287-7fa711f10cf2",
+    "internship_name": "Failed To Delete Simulation: Invalid Input Syntax For Type Uuid: \"Undefined\"",
+    "enrolled_at": "2026-01-16T11:29:46.545610",
+    "tasks": [
+      {
+        "task_id": "task_f77872c7-06b4-483a-bdd6-d99faaff8e73",
+        "title": "Complete Internship",
+        "order": 1,
+        "completed": false
+      }
+    ]
+  },
+  {
+    "user_id": "b4c54906-4caf-4c44-bfd7-b5693c7eb247",
+    "user_name": "vikas",
+    "user_email": "vksmp07@gmail.com",
+    "internship_id": "316dfce8-a812-4f36-b960-0d6e0c9589a7",
+    "internship_name": "Add New Simulation Simulation Details",
+    "enrolled_at": "2026-01-18T14:37:12.901162",
+    "tasks": [
+      {
+        "task_id": "task_6fc298d8-e441-42e3-a6d0-34d193acaac5",
+        "title": "Complete Internship",
+        "order": 1,
+        "completed": false
+      }
+    ]
   }
 ]

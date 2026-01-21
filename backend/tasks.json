@@ -1,0 +1,44 @@
+[
+  {
+    "simulation_id": "16310d14-d5d5-47c9-8287-7fa711f10cf2",
+    "sequence": 1,
+    "title": "Task 1",
+    "full_title": "Failed To Delete Simulation: Invalid Input Syntax For Type Uuid: \"Undefined\"",
+    "duration": "15-30 mins",
+    "difficulty": "Beginner",
+    "material_url": "",
+    "description": "<p>Failed to delete simulation: invalid input syntax for type uuid: \"undefined\"</p>",
+    "what_youll_learn": "Failed to delete simulation: invalid input syntax for type uuid: \"undefined\"",
+    "what_youll_do": "Failed to delete simulation: invalid input syntax for type uuid: \"undefined\"",
+    "quiz": "{\"enabled\": true, \"title\": \"Failed to delete simulation: invalid input syntax for type uuid: \\\"undefined\\\"\", \"description\": \"Failed to delete simulation: invalid input syntax for type uuid: \\\"undefined\\\"\", \"passingMarks\": 9, \"totalMarks\": 1, \"timeLimit\": 0, \"attemptsAllowed\": 1, \"showResultsImmediately\": true, \"shuffleQuestions\": false, \"shuffleOptions\": false, \"requirePassToUnlockNext\": true, \"questions\": [{\"id\": \"q_1768543100707_hl8xpn9dk\", \"type\": \"mcq\", \"question\": \"Failed to delete simulation: invalid input syntax for type uuid: \\\"undefined\\\"\", \"options\": [{\"id\": \"opt_1768543100707_1\", \"text\": \"Failed to delete simulation: invalid input syntax for type uuid: \\\"undefined\\\"\", \"isCorrect\": true}, {\"id\": \"opt_1768543100707_2\", \"text\": \"Failed to delete simulation: invalid input syntax for type uuid: \\\"undefined\\\"\", \"isCorrect\": false}, {\"id\": \"opt_1768543100707_3\", \"text\": \"Failed to delete simulation: invalid input syntax for type uuid: \\\"undefined\\\"\", \"isCorrect\": false}, {\"id\": \"opt_1768543100707_4\", \"text\": \"Failed to delete simulation: invalid input syntax for type uuid: \\\"undefined\\\"\", \"isCorrect\": false}], \"correctAnswer\": \"\", \"marks\": 1, \"explanation\": \"Failed to delete simulation: invalid input syntax for type uuid: \\\"undefined\\\"\"}]}",
+    "id": 1
+  },
+  {
+    "simulation_id": "37984850-6a2d-4d15-be4d-147ed0718167",
+    "sequence": 1,
+    "title": "Task 1",
+    "full_title": "Http://Localhost:5173/Edit-Internship",
+    "duration": "15-30 mins",
+    "difficulty": "Intermediate",
+    "material_url": "",
+    "description": "<ul>\n<li>http://localhost:5173/edit-internship</li>\n</ul>",
+    "what_youll_learn": "http://localhost:5173/edit-internship",
+    "what_youll_do": "http://localhost:5173/edit-internship",
+    "quiz": "{\"enabled\": true, \"title\": \"http://localhost:5173/edit-internship\", \"description\": \"http://localhost:5173/edit-internship\", \"passingMarks\": 10, \"totalMarks\": 1, \"timeLimit\": 0, \"attemptsAllowed\": 1, \"showResultsImmediately\": true, \"shuffleQuestions\": false, \"shuffleOptions\": false, \"requirePassToUnlockNext\": true, \"questions\": [{\"id\": \"q_1768544012807_tiiw8j87k\", \"type\": \"mcq\", \"question\": \"http://localhost:5173/edit-internship\", \"options\": [{\"id\": \"opt_1768544012807_1\", \"text\": \"http://localhost:5173/edit-internship\", \"isCorrect\": false}, {\"id\": \"opt_1768544012807_2\", \"text\": \"http://localhost:5173/edit-internship\", \"isCorrect\": true}, {\"id\": \"opt_1768544012807_3\", \"text\": \"http://localhost:5173/edit-internship\", \"isCorrect\": false}, {\"id\": \"opt_1768544012807_4\", \"text\": \"http://localhost:5173/edit-internship\", \"isCorrect\": false}], \"correctAnswer\": \"\", \"marks\": 1, \"explanation\": \"http://localhost:5173/edit-internship\"}]}",
+    "id": 2
+  },
+  {
+    "simulation_id": "316dfce8-a812-4f36-b960-0d6e0c9589a7",
+    "sequence": 1,
+    "title": "Task 1",
+    "full_title": "Add New Simulation Simulation Detailsq",
+    "duration": "15-30 mins",
+    "difficulty": "Beginner",
+    "material_url": "",
+    "description": "<h2 class=\"text-3xl font-bold text-gray-800 flex items-center gap-3\">Add New Simulation</h2>\n<section>\n<h2 class=\"text-2xl font-semibold text-gray-700 mb-3 mt-2\">Simulation Details</h2>\n</section>",
+    "what_youll_learn": "Add New Simulation\nSimulation Details",
+    "what_youll_do": "Add New Simulation\nSimulation Details",
+    "quiz": "{\"enabled\": true, \"title\": \"Add New Simulation Simulation Details\", \"description\": \"Add New Simulation Simulation Details\", \"passingMarks\": 10, \"totalMarks\": 1, \"timeLimit\": 0, \"attemptsAllowed\": 1, \"showResultsImmediately\": true, \"shuffleQuestions\": false, \"shuffleOptions\": false, \"requirePassToUnlockNext\": true, \"questions\": [{\"id\": \"q_1768727071855_udih3r02y\", \"type\": \"mcq\", \"question\": \"Add New Simulation\\nSimulation Details\", \"options\": [{\"id\": \"opt_1768727071855_1\", \"text\": \"Add New Simulation Simulation Details\", \"isCorrect\": false}, {\"id\": \"opt_1768727071855_2\", \"text\": \"Add New Simulation Simulation Details\", \"isCorrect\": false}, {\"id\": \"opt_1768727071855_3\", \"text\": \"Add New Simulation Simulation Details\", \"isCorrect\": true}], \"correctAnswer\": \"\", \"marks\": 1, \"explanation\": \"Add New Simulation\\nSimulation Details\"}]}",
+    "id": 3
+  }
+]

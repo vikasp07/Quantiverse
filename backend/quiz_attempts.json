@@ -1,0 +1,23 @@
+{
+  "b4c54906-4caf-4c44-bfd7-b5693c7eb247_3": {
+    "user_id": "b4c54906-4caf-4c44-bfd7-b5693c7eb247",
+    "task_id": 3,
+    "simulation_id": "316dfce8-a812-4f36-b960-0d6e0c9589a7",
+    "attempts": [
+      {
+        "attempt_number": 1,
+        "score": 0,
+        "total_marks": 1,
+        "percentage": 0,
+        "passed": false,
+        "completed_at": "2026-01-18T09:07:35.196Z",
+        "correct_count": 0,
+        "total_questions": 1
+      }
+    ],
+    "best_score": 0,
+    "passed": false,
+    "first_attempt_at": "2026-01-18T09:07:35.196Z",
+    "last_attempt_at": "2026-01-18T09:07:35.196Z"
+  }
+}

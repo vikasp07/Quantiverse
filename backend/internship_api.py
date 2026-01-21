@@ -18,6 +18,8 @@ Date: December 26, 2025
 from flask import Blueprint, request, jsonify, current_app
 from sanitizer import HtmlSanitizer
 import logging
+import json as json_module
+from pathlib import Path
 
 # Create blueprint for internship endpoints
 internship_bp = Blueprint('internships', __name__, url_prefix='/admin/internships')
@@ -146,15 +148,13 @@ def create_internship():
             logger.info("Falling back to local JSON storage...")
             
             # Fallback: Save to JSON file
-            import json
-            from pathlib import Path
             simulations_file = Path('simulations.json')
             
             try:
                 # Load existing simulations
                 if simulations_file.exists():
-                    with open(simulations_file, 'r') as f:
-                        existing_sims = json.load(f)
+                    with open(simulations_file, 'r', encoding='utf-8') as f:
+                        existing_sims = json_module.load(f)
                 else:
                     existing_sims = []
                 
@@ -163,8 +163,8 @@ def create_internship():
                 existing_sims.append(simulation_data)
                 
                 # Save to file
-                with open(simulations_file, 'w') as f:
-                    json.dump(existing_sims, f, indent=2)
+                with open(simulations_file, 'w', encoding='utf-8') as f:
+                    json_module.dump(existing_sims, f, indent=2)
                 
                 logger.info(f"Saved simulation to JSON with ID: {simulation_data['id']}")
                 
@@ -243,6 +243,13 @@ def create_internship():
                     # Store only HTML
                     task_data[field_name] = sanitized_html
                 
+                # Process quiz data if present
+                quiz = task.get('quiz')
+                if quiz and isinstance(quiz, dict) and quiz.get('enabled'):
+                    task_data['quiz'] = json_module.dumps(quiz)
+                else:
+                    task_data['quiz'] = None
+                
                 tasks_data.append(task_data)
             
             # ===== INSERT TASKS INTO SUPABASE =====
@@ -258,15 +265,13 @@ def create_internship():
                     logger.info("Falling back to local JSON storage for tasks...")
                     
                     # Fallback: Save tasks to JSON file
-                    import json
-                    from pathlib import Path
                     tasks_file = Path('tasks.json')
                     
                     try:
                         # Load existing tasks
                         if tasks_file.exists():
-                            with open(tasks_file, 'r') as f:
-                                existing_tasks = json.load(f)
+                            with open(tasks_file, 'r', encoding='utf-8') as f:
+                                existing_tasks = json_module.load(f)
                         else:
                             existing_tasks = []
                         
@@ -276,8 +281,8 @@ def create_internship():
                             existing_tasks.append(task)
                         
                         # Save to file
-                        with open(tasks_file, 'w') as f:
-                            json.dump(existing_tasks, f, indent=2)
+                        with open(tasks_file, 'w', encoding='utf-8') as f:
+                            json_module.dump(existing_tasks, f, indent=2)
                         
                         logger.info(f"Saved {len(tasks_data)} tasks to JSON")
                         
@@ -330,13 +335,11 @@ def get_internships():
                 logger.warning(f"Supabase fetch failed: {str(supabase_error)}, trying JSON fallback...")
         
         # Fallback to JSON
-        import json
-        from pathlib import Path
         simulations_file = Path('simulations.json')
         
         if simulations_file.exists():
-            with open(simulations_file, 'r') as f:
-                data = json.load(f)
+            with open(simulations_file, 'r', encoding='utf-8') as f:
+                data = json_module.load(f)
             logger.info(f"Fetched {len(data)} simulations from JSON fallback")
             return jsonify({
                 'success': True,
@@ -354,6 +357,55 @@ def get_internships():
     except Exception as e:
         logger.error(f"Error fetching simulations: {str(e)}", exc_info=True)
         return jsonify({'error': f'Failed to fetch simulations: {str(e)}'}), 500
+
+
+@internship_bp.route('/<simulation_id>/tasks', methods=['GET'])
+def get_tasks_for_simulation(simulation_id):
+    """Fetch tasks for a simulation - from Supabase or fallback to JSON"""
+    try:
+        supabase = current_app.config.get('supabase')
+        
+        # Try Supabase first
+        if supabase:
+            try:
+                response = supabase.table('tasks').select('*').eq('simulation_id', simulation_id).order('sequence').execute()
+                if response.data:
+                    logger.info(f"Fetched {len(response.data)} tasks from Supabase for simulation {simulation_id}")
+                    return jsonify({
+                        'success': True,
+                        'data': response.data,
+                        'count': len(response.data)
+                    }), 200
+            except Exception as supabase_error:
+                logger.warning(f"Supabase tasks fetch failed: {str(supabase_error)}, trying JSON fallback...")
+        
+        # Fallback to JSON
+        tasks_file = Path('tasks.json')
+        
+        if tasks_file.exists():
+            with open(tasks_file, 'r', encoding='utf-8') as f:
+                all_tasks = json_module.load(f)
+            # Filter tasks for this simulation
+            simulation_tasks = [t for t in all_tasks if str(t.get('simulation_id')) == str(simulation_id)]
+            # Sort by sequence
+            simulation_tasks.sort(key=lambda x: x.get('sequence', 0))
+            logger.info(f"Fetched {len(simulation_tasks)} tasks from JSON fallback for simulation {simulation_id}")
+            return jsonify({
+                'success': True,
+                'data': simulation_tasks,
+                'count': len(simulation_tasks),
+                'source': 'json'
+            }), 200
+        else:
+            return jsonify({
+                'success': True,
+                'data': [],
+                'count': 0
+            }), 200
+            
+    except Exception as e:
+        logger.error(f"Error fetching tasks: {str(e)}", exc_info=True)
+        return jsonify({'error': f'Failed to fetch tasks: {str(e)}'}), 500
 
 
 @internship_bp.route('/<int:internship_id>', methods=['PUT'])

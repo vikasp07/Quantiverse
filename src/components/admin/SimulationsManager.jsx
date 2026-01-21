@@ -128,9 +128,17 @@ function SimulationsManager() {
   };
 
   const handleDelete = async (simulation) => {
+    // Use passed simulation or fall back to selectedSimulation
+    const simToDelete = simulation || selectedSimulation;
+    
+    if (!simToDelete || !simToDelete.id) {
+      alert("Error: No simulation selected or simulation ID is missing.");
+      return;
+    }
+
     if (
       !window.confirm(
-        `Are you sure you want to delete the simulation "${simulation.title}"? This action cannot be undone.`
+        `Are you sure you want to delete the simulation "${simToDelete.title || 'Untitled'}"? This action cannot be undone.`
       )
     ) {
       return;
@@ -141,7 +149,7 @@ function SimulationsManager() {
       const { error: tasksError } = await supabase
         .from("tasks")
         .delete()
-        .eq("simulation_id", simulation.id);
+        .eq("simulation_id", simToDelete.id);
 
       if (tasksError) {
         console.error("Error deleting tasks:", tasksError);
@@ -152,13 +160,13 @@ function SimulationsManager() {
       const { error: simError } = await supabase
         .from("simulations")
         .delete()
-        .eq("id", simulation.id);
+        .eq("id", simToDelete.id);
 
       if (simError) throw simError;
 
       alert("Simulation deleted successfully!");
       // If on grid, just refresh list
-      if (!selectedSimulation || selectedSimulation.id !== simulation.id) {
+      if (!selectedSimulation || selectedSimulation.id !== simToDelete.id) {
         fetchSimulations();
       } else {
         navigate("/edit-internship");

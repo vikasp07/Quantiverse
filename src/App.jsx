@@ -56,6 +56,7 @@ import ScanResults from "./components/ScanResults";
 import AddInternship from "./components/admin/AddInternship";
 import SimulationsManager from "./components/admin/SimulationsManager";
 import Confirmation from "./components/admin/Confirmation";
+import UserActivityOverview from "./components/admin/UserActivityOverview";
 import InternshipCandidates from "./components/internship/InternshipCandidates";
 import InternshipSubmissions from "./components/internship/InternshipSubmissions";
 import LandingPage from "./components/resume_builder/LandingPage";
@@ -73,77 +74,93 @@ function App() {
       {/* Activity Tracker - tracks user activity when logged in */}
       {session?.user && <ActivityTracker />}
       <Routes>
-      <Route path="/" element={<Homepage />} />
-      <Route path="/signin" element={<Signin />} />
-      <Route path="/signup" element={<Signup />} />
-      <Route path="/update-password" element={<UpdatePassword />} />
-      <Route
-        path="/admin"
-        element={
-          <ProtectedRoute>
-            <AdminDashboard />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/confirmation"
-        element={
-          <ProtectedRoute>
-            <Confirmation />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/add-internship"
-        element={
-          <ProtectedRoute>
-            <AddInternship />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/edit-internship"
-        element={
-          <ProtectedRoute>
-            <SimulationsManager />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/edit-internship/:id"
-        element={
-          <ProtectedRoute>
-            <SimulationsManager />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/admin/internship/:internshipId/candidates"
-        element={
-          <ProtectedRoute>
-            <InternshipCandidates />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/admin/internship/:internshipId/submissions"
-        element={
-          <ProtectedRoute>
-            <InternshipSubmissions />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/admin/user/:userId/profile"
-        element={
-          <ProtectedRoute>
-            <UserProfile />
-          </ProtectedRoute>
-        }
-      />
+        <Route path="/" element={<Homepage />} />
+        <Route path="/signin" element={<Signin />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/update-password" element={<UpdatePassword />} />
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute>
+              <AdminDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/confirmation"
+          element={
+            <ProtectedRoute>
+              <Confirmation />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/add-internship"
+          element={
+            <ProtectedRoute>
+              <AddInternship />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/edit-internship"
+          element={
+            <ProtectedRoute>
+              <SimulationsManager />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/edit-internship/:id"
+          element={
+            <ProtectedRoute>
+              <SimulationsManager />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/internship/:internshipId/candidates"
+          element={
+            <ProtectedRoute>
+              <InternshipCandidates />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/internship/:internshipId/submissions"
+          element={
+            <ProtectedRoute>
+              <InternshipSubmissions />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/user/:userId/profile"
+          element={
+            <ProtectedRoute>
+              <UserProfile />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/activity"
+          element={
+            <ProtectedRoute>
+              <UserActivityOverview />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <UserProfile />
+            </ProtectedRoute>
+          }
+        />
 
-      {/* Protected Routes */}
-      {/* Mock Interview /home - Disabled
+        {/* Protected Routes */}
+        {/* Mock Interview /home - Disabled
       <Route
         path="/home"
         element={
@@ -154,7 +171,7 @@ function App() {
         }
       />
       */}
-      {/* Mock Interview /mockInterview - Disabled
+        {/* Mock Interview /mockInterview - Disabled
       <Route
         path="/mockInterview"
         element={
@@ -164,35 +181,35 @@ function App() {
         }
       />
       */}
-      <Route
-        path="/practicing-questions"
-        element={
-          <ProtectedRoute>
-            <PracticingQuestions />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/job-readiness-assessment"
-        element={
-          <ProtectedRoute>
-            <JobReadinessAssessment />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/feedback"
-        element={
-          <ProtectedRoute>
-            <Feedback />
-          </ProtectedRoute>
-        }
-      />
-      {/* ATS Checker - Disabled
+        <Route
+          path="/practicing-questions"
+          element={
+            <ProtectedRoute>
+              <PracticingQuestions />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/job-readiness-assessment"
+          element={
+            <ProtectedRoute>
+              <JobReadinessAssessment />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/feedback"
+          element={
+            <ProtectedRoute>
+              <Feedback />
+            </ProtectedRoute>
+          }
+        />
+        {/* ATS Checker - Disabled
       <Route path="/ats-checker" element={<ATSChecker />} />
       */}
 
-      {/* Preparation Hub - Disabled
+        {/* Preparation Hub - Disabled
       <Route
         path="/preparation-hub"
         element={
@@ -203,41 +220,41 @@ function App() {
       />
       */}
 
-      <Route
-        path="/internship"
-        element={
-          <ProtectedRoute>
-            <InternshipDashboard />
-          </ProtectedRoute>
-        }
-      />
+        <Route
+          path="/internship"
+          element={
+            <ProtectedRoute>
+              <InternshipDashboard />
+            </ProtectedRoute>
+          }
+        />
 
-      <Route
-        path="/simulation/:id"
-        element={
-          <ProtectedRoute>
-            <SimulationDetail />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/internship/:id/task/:taskId"
-        element={
-          <ProtectedRoute>
-            <SimulationTaskPage />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/progress"
-        element={
-          <ProtectedRoute>
-            <ProgressPage />
-          </ProtectedRoute>
-        }
-      />
+        <Route
+          path="/simulation/:id"
+          element={
+            <ProtectedRoute>
+              <SimulationDetail />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/internship/:id/task/:taskId"
+          element={
+            <ProtectedRoute>
+              <SimulationTaskPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/progress"
+          element={
+            <ProtectedRoute>
+              <ProgressPage />
+            </ProtectedRoute>
+          }
+        />
 
-      {/* ATS Scanner - Disabled
+        {/* ATS Scanner - Disabled
       <Route
         path="/ats-scanner"
         element={
@@ -247,7 +264,7 @@ function App() {
         }
       />
       */}
-      {/* ATS Results - Disabled
+        {/* ATS Results - Disabled
       <Route
         path="/results"
         element={
@@ -257,12 +274,12 @@ function App() {
         }
       />
       */}
-      {/* Resume Builder - Disabled
+        {/* Resume Builder - Disabled
       <Route path="/resume" element={<ResumeBuilder />} />
       <Route path="/land" element={<LandingPage />} />
       */}
 
-      {/* Document Center - Disabled
+        {/* Document Center - Disabled
       <Route
         path="/document-center"
         element={
@@ -273,10 +290,10 @@ function App() {
       />
       */}
 
-      {/* Resume From Scratch - Disabled
+        {/* Resume From Scratch - Disabled
       <Route path="/resume-from-scratch" element={<ResumeFromScratch />} />
       */}
-    </Routes>
+      </Routes>
     </>
   );
 }

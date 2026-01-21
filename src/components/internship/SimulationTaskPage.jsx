@@ -18,11 +18,16 @@ import {
   Clock,
   ArrowLeft,
   Eye,
+  HelpCircle,
+  Lock,
+  Trophy,
+  XCircle,
 } from "lucide-react";
 import { useUser } from "@supabase/auth-helpers-react";
 import { supabase } from "../utils/supabaseClient";
 import WorkUpload from "./WorkUpload";
 import SubmissionPreviewModal from "./SubmissionPreviewModal";
+import QuizTaker from "./QuizTaker";
 
 const TaskStepper = ({ tasks, currentTaskIndex, simulationId, simulation }) => {
   const navigate = useNavigate();
@@ -40,7 +45,9 @@ const TaskStepper = ({ tasks, currentTaskIndex, simulationId, simulation }) => {
       </button>
 
       <div className="mb-4">
-        <span className="text-xs font-medium text-slate-400 uppercase tracking-wider">Tasks</span>
+        <span className="text-xs font-medium text-slate-400 uppercase tracking-wider">
+          Tasks
+        </span>
       </div>
 
       <div className="space-y-2">
@@ -76,7 +83,15 @@ const TaskStepper = ({ tasks, currentTaskIndex, simulationId, simulation }) => {
                 {isCompleted ? <Check size={14} /> : index + 1}
               </div>
               <div className="min-w-0 flex-1">
-                <p className={`text-sm font-medium truncate ${isCurrent ? 'text-indigo-700' : isCompleted ? 'text-emerald-700' : 'text-slate-700'}`}>
+                <p
+                  className={`text-sm font-medium truncate ${
+                    isCurrent
+                      ? "text-indigo-700"
+                      : isCompleted
+                      ? "text-emerald-700"
+                      : "text-slate-700"
+                  }`}
+                >
                   {task.title}
                 </p>
                 <p className="text-xs text-slate-500 mt-0.5">
@@ -219,6 +234,11 @@ const SimulationTaskPage = () => {
   const [enrollmentChecked, setEnrollmentChecked] = useState(false);
   const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false);
 
+  // Quiz states
+  const [showQuiz, setShowQuiz] = useState(false);
+  const [quizAttempts, setQuizAttempts] = useState({});
+  const [quizStatus, setQuizStatus] = useState({});
+
   useEffect(() => {
     const getCurrentUser = async () => {
       try {
@@ -255,19 +275,20 @@ const SimulationTaskPage = () => {
       }
 
       try {
-        const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
+        const API_BASE =
+          import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
         const response = await axios.get(`${API_BASE}/enrollment-status`, {
           params: {
             user_id: currentUser.id,
-            internship_id: id
-          }
+            internship_id: id,
+          },
         });
 
         if (response.data && response.data.is_enrolled) {
           setIsEnrolled(true);
           setEnrollmentChecked(true);
         } else {
-          setError('You must enroll in this program before accessing tasks.');
+          setError("You must enroll in this program before accessing tasks.");
           setIsEnrolled(false);
           setEnrollmentChecked(true);
           // Redirect to simulation detail page
@@ -276,7 +297,7 @@ const SimulationTaskPage = () => {
           }, 2000);
         }
       } catch (err) {
-        console.error('Error checking enrollment:', err);
+        console.error("Error checking enrollment:", err);
         // Allow access anyway - don't block users if backend is down
         // but log the error for debugging
         setIsEnrolled(true);
@@ -286,6 +307,90 @@ const SimulationTaskPage = () => {
 
     checkEnrollment();
   }, [userLoaded, currentUser, id, navigate]);
+
+  // Load quiz attempts for the current user and simulation
+  useEffect(() => {
+    const loadQuizStatus = async () => {
+      if (!currentUser || !id) return;
+
+      try {
+        const API_BASE =
+          import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+        const response = await axios.get(
+          `${API_BASE}/api/quiz/status/${currentUser.id}/${id}`
+        );
+        setQuizStatus(response.data?.task_statuses || {});
+      } catch (err) {
+        console.error("Error loading quiz status:", err);
+      }
+    };
+
+    loadQuizStatus();
+  }, [currentUser, id]);
+
+  // Handle quiz completion
+  const handleQuizComplete = async (result) => {
+    try {
+      const currentTaskIndex = parseInt(taskId) - 1;
+      const currentTask = tasks[currentTaskIndex];
+
+      const API_BASE =
+        import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+      await axios.post(`${API_BASE}/api/quiz/submit`, {
+        user_id: currentUser.id,
+        task_id: currentTask.id,
+        simulation_id: id,
+        quiz_result: result,
+      });
+
+      // Update local quiz status
+      setQuizStatus((prev) => ({
+        ...prev,
+        [currentTask.id]: {
+          passed: result.passed,
+          best_score: result.percentage,
+          total_attempts: (prev[currentTask.id]?.total_attempts || 0) + 1,
+        },
+      }));
+
+      // If passed, allow proceeding to next task
+      if (result.passed) {
+        setShowQuiz(false);
+      }
+    } catch (err) {
+      console.error("Error submitting quiz:", err);
+    }
+  };
+
+  // Check if task is locked due to previous quiz not passed
+  const isTaskLocked = useCallback(
+    (taskIndex) => {
+      if (taskIndex === 0) return false; // First task is never locked
+
+      const previousTask = tasks[taskIndex - 1];
+      if (!previousTask) return false;
+
+      // Check if previous task has a quiz that requires passing
+      let quiz = null;
+      try {
+        quiz = previousTask.quiz
+          ? typeof previousTask.quiz === "string"
+            ? JSON.parse(previousTask.quiz)
+            : previousTask.quiz
+          : null;
+      } catch (e) {
+        quiz = null;
+      }
+
+      if (quiz && quiz.enabled && quiz.requirePassToUnlockNext) {
+        const status = quizStatus[previousTask.id];
+        return !status?.passed;
+      }
+
+      return false;
+    },
+    [tasks, quizStatus]
+  );
 
   const loadTasksWithProgress = useCallback(
     async (simulationId) => {
@@ -544,7 +649,8 @@ const SimulationTaskPage = () => {
             Access Denied
           </h2>
           <p className="text-slate-600 mb-6">
-            You must enroll in this program before accessing the tasks. Redirecting...
+            You must enroll in this program before accessing the tasks.
+            Redirecting...
           </p>
         </div>
       </div>
@@ -631,7 +737,7 @@ const SimulationTaskPage = () => {
               <h1 className="text-2xl md:text-3xl font-bold text-slate-900">
                 {currentTask.title}
               </h1>
-            {/* {currentTask.status === 'completed' && (
+              {/* {currentTask.status === 'completed' && (
               <div className="flex items-center gap-2 text-green-600 font-medium mt-1">
                 <Check size={16} />
                 <span className="text-sm">Task Completed</span>
@@ -667,62 +773,66 @@ const SimulationTaskPage = () => {
               </div>
             )} */}
 
-            {currentTask.status === "completed" && (
-              <>
-                <div className="flex items-center gap-2 mt-3">
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-100 text-emerald-700 rounded-lg text-sm font-medium">
-                    <Check size={14} />
-                    Task Completed
-                  </span>
-                  {currentTask.confirmation_status === "pending" && (
-                    <span className="inline-flex items-center px-3 py-1 bg-amber-100 text-amber-700 rounded-lg text-sm font-medium">
-                      Pending Review
+              {currentTask.status === "completed" && (
+                <>
+                  <div className="flex items-center gap-2 mt-3">
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-100 text-emerald-700 rounded-lg text-sm font-medium">
+                      <Check size={14} />
+                      Task Completed
                     </span>
-                  )}
-                  {currentTask.confirmation_status === "accepted" && (
-                    <span className="inline-flex items-center px-3 py-1 bg-emerald-100 text-emerald-700 rounded-lg text-sm font-medium">
-                      Accepted
-                    </span>
-                  )}
-                  {currentTask.confirmation_status === "rejected" && (
-                    <span className="inline-flex items-center px-3 py-1 bg-red-100 text-red-700 rounded-lg text-sm font-medium">
-                      Rejected
-                    </span>
-                  )}
-                </div>
+                    {currentTask.confirmation_status === "pending" && (
+                      <span className="inline-flex items-center px-3 py-1 bg-amber-100 text-amber-700 rounded-lg text-sm font-medium">
+                        Pending Review
+                      </span>
+                    )}
+                    {currentTask.confirmation_status === "accepted" && (
+                      <span className="inline-flex items-center px-3 py-1 bg-emerald-100 text-emerald-700 rounded-lg text-sm font-medium">
+                        Accepted
+                      </span>
+                    )}
+                    {currentTask.confirmation_status === "rejected" && (
+                      <span className="inline-flex items-center px-3 py-1 bg-red-100 text-red-700 rounded-lg text-sm font-medium">
+                        Rejected
+                      </span>
+                    )}
+                  </div>
 
-                {(currentTask.confirmation_status === "rejected" ||
-                  currentTask.confirmation_status === "accepted") &&
-                  currentTask.comment && (
-                    <div className="mt-4">
-                      <div className="bg-indigo-50 border-l-4 border-indigo-400 text-slate-900 p-4 rounded-r-lg text-sm leading-relaxed">
-                        <div className="flex items-center gap-2 mb-1">
-                          <span className="font-semibold text-indigo-700">Feedback</span>
+                  {(currentTask.confirmation_status === "rejected" ||
+                    currentTask.confirmation_status === "accepted") &&
+                    currentTask.comment && (
+                      <div className="mt-4">
+                        <div className="bg-indigo-50 border-l-4 border-indigo-400 text-slate-900 p-4 rounded-r-lg text-sm leading-relaxed">
+                          <div className="flex items-center gap-2 mb-1">
+                            <span className="font-semibold text-indigo-700">
+                              Feedback
+                            </span>
+                          </div>
+                          <div className="text-slate-700">
+                            {currentTask.comment}
+                          </div>
                         </div>
-                        <div className="text-slate-700">{currentTask.comment}</div>
                       </div>
-                    </div>
-                  )}
-              </>
-            )}
+                    )}
+                </>
+              )}
             </div>
 
-          {currentTask.material_url && (
-            <button
-              onClick={() => {
-                const link = document.createElement("a");
-                link.href = currentTask.material_url;
-                link.download = "";
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-              }}
-              className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-2.5 rounded-lg transition-all self-start"
-            >
-              <FileText className="w-4 h-4" />
-              Download Materials
-            </button>
-          )}
+            {currentTask.material_url && (
+              <button
+                onClick={() => {
+                  const link = document.createElement("a");
+                  link.href = currentTask.material_url;
+                  link.download = "";
+                  document.body.appendChild(link);
+                  link.click();
+                  document.body.removeChild(link);
+                }}
+                className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-2.5 rounded-lg transition-all self-start"
+              >
+                <FileText className="w-4 h-4" />
+                Download Materials
+              </button>
+            )}
           </div>
         </header>
 
@@ -738,35 +848,158 @@ const SimulationTaskPage = () => {
           currentUser={currentUser}
         />
 
-        {/* View Previous Submission */}
-        {currentTask.status === "completed" && currentTask.uploaded_work_url && (
-          <div className="bg-indigo-50 border border-indigo-200 rounded-xl p-5">
-            <div className="flex items-center justify-between gap-4">
-              <div>
-                <h3 className="text-base font-semibold text-indigo-900 flex items-center gap-2 mb-1">
-                  <FileText className="w-5 h-5" />
-                  Your Submission
+        {/* Quiz Section */}
+        {(() => {
+          let quiz = null;
+          try {
+            quiz = currentTask.quiz
+              ? typeof currentTask.quiz === "string"
+                ? JSON.parse(currentTask.quiz)
+                : currentTask.quiz
+              : null;
+          } catch (e) {
+            quiz = null;
+          }
+
+          if (!quiz || !quiz.enabled) return null;
+
+          const taskQuizStatus = quizStatus[currentTask.id];
+          const hasPassed = taskQuizStatus?.passed;
+          const attemptsUsed = taskQuizStatus?.total_attempts || 0;
+          const attemptsRemaining = quiz.attemptsAllowed - attemptsUsed;
+
+          return (
+            <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
+                  <HelpCircle className="w-5 h-5 text-purple-500" />
+                  Task Quiz
                 </h3>
-                <p className="text-sm text-indigo-700">
-                  View and reupload your submitted work
-                </p>
-                {currentTask.confirmation_status === "rejected" && (
-                  <p className="text-sm text-red-600 font-medium mt-2 flex items-center gap-1">
-                    <AlertCircle className="w-4 h-4" />
-                    Submission rejected. Please review feedback and reupload.
-                  </p>
-                )}
+                {hasPassed ? (
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-100 text-emerald-700 rounded-lg text-sm font-medium">
+                    <Trophy className="w-4 h-4" />
+                    Passed ({taskQuizStatus.best_score}%)
+                  </span>
+                ) : attemptsUsed > 0 ? (
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-100 text-amber-700 rounded-lg text-sm font-medium">
+                    <XCircle className="w-4 h-4" />
+                    Not Passed Yet
+                  </span>
+                ) : null}
               </div>
-              <button
-                onClick={() => setIsPreviewModalOpen(true)}
-                className="flex items-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg transition-colors text-sm"
-              >
-                <Eye className="w-4 h-4" />
-                Preview & Reupload
-              </button>
+
+              <p className="text-slate-600 mb-4">
+                {quiz.description ||
+                  "Complete this quiz to demonstrate your understanding of the task."}
+              </p>
+
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4 text-sm">
+                <div className="bg-slate-50 rounded-lg p-3">
+                  <p className="text-slate-500">Questions</p>
+                  <p className="font-semibold text-slate-900">
+                    {quiz.questions?.length || 0}
+                  </p>
+                </div>
+                <div className="bg-slate-50 rounded-lg p-3">
+                  <p className="text-slate-500">Total Marks</p>
+                  <p className="font-semibold text-slate-900">
+                    {quiz.totalMarks}
+                  </p>
+                </div>
+                <div className="bg-slate-50 rounded-lg p-3">
+                  <p className="text-slate-500">Passing Score</p>
+                  <p className="font-semibold text-slate-900">
+                    {quiz.passingMarks}%
+                  </p>
+                </div>
+                <div className="bg-slate-50 rounded-lg p-3">
+                  <p className="text-slate-500">Time Limit</p>
+                  <p className="font-semibold text-slate-900">
+                    {quiz.timeLimit || "None"} {quiz.timeLimit ? "mins" : ""}
+                  </p>
+                </div>
+              </div>
+
+              {quiz.requirePassToUnlockNext && !hasPassed && (
+                <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4 flex items-center gap-2">
+                  <Lock className="w-4 h-4 text-amber-600" />
+                  <p className="text-sm text-amber-700">
+                    You must pass this quiz to unlock the next task.
+                  </p>
+                </div>
+              )}
+
+              {showQuiz ? (
+                <div className="mt-4">
+                  <QuizTaker
+                    quiz={quiz}
+                    onComplete={handleQuizComplete}
+                    onClose={() => setShowQuiz(false)}
+                    attemptNumber={attemptsUsed + 1}
+                  />
+                </div>
+              ) : (
+                <div className="flex items-center gap-4">
+                  {!hasPassed && attemptsRemaining > 0 && (
+                    <button
+                      onClick={() => setShowQuiz(true)}
+                      className="inline-flex items-center gap-2 px-5 py-2.5 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-lg transition-colors"
+                    >
+                      <HelpCircle className="w-4 h-4" />
+                      {attemptsUsed > 0 ? "Retake Quiz" : "Start Quiz"}
+                    </button>
+                  )}
+                  {attemptsUsed > 0 && (
+                    <p className="text-sm text-slate-500">
+                      {hasPassed
+                        ? "Quiz completed successfully!"
+                        : `${attemptsRemaining} attempt${
+                            attemptsRemaining !== 1 ? "s" : ""
+                          } remaining`}
+                    </p>
+                  )}
+                  {!hasPassed && attemptsRemaining <= 0 && (
+                    <p className="text-sm text-red-600">
+                      No attempts remaining. Please contact support if you need
+                      additional attempts.
+                    </p>
+                  )}
+                </div>
+              )}
             </div>
-          </div>
-        )}
+          );
+        })()}
+
+        {/* View Previous Submission */}
+        {currentTask.status === "completed" &&
+          currentTask.uploaded_work_url && (
+            <div className="bg-indigo-50 border border-indigo-200 rounded-xl p-5">
+              <div className="flex items-center justify-between gap-4">
+                <div>
+                  <h3 className="text-base font-semibold text-indigo-900 flex items-center gap-2 mb-1">
+                    <FileText className="w-5 h-5" />
+                    Your Submission
+                  </h3>
+                  <p className="text-sm text-indigo-700">
+                    View and reupload your submitted work
+                  </p>
+                  {currentTask.confirmation_status === "rejected" && (
+                    <p className="text-sm text-red-600 font-medium mt-2 flex items-center gap-1">
+                      <AlertCircle className="w-4 h-4" />
+                      Submission rejected. Please review feedback and reupload.
+                    </p>
+                  )}
+                </div>
+                <button
+                  onClick={() => setIsPreviewModalOpen(true)}
+                  className="flex items-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg transition-colors text-sm"
+                >
+                  <Eye className="w-4 h-4" />
+                  Preview & Reupload
+                </button>
+              </div>
+            </div>
+          )}
 
         {/* Navigation buttons */}
         <div className="pt-2 flex gap-3">

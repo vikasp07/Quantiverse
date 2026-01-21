@@ -33,6 +33,22 @@ export async function fetchSimulations() {
 
 // Fetch tasks for a specific simulation - sorted by sequence (correct order)
 export async function fetchTasksForSimulation(simulationId) {
+  try {
+    // Try backend endpoint first (has fallback to JSON)
+    const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
+    const response = await fetch(`${API_BASE}/admin/internships/${simulationId}/tasks`);
+    if (response.ok) {
+      const result = await response.json();
+      if (result.data) {
+        console.log(`Fetched ${result.count} tasks from backend for simulation ${simulationId}`);
+        return result.data;
+      }
+    }
+  } catch (err) {
+    console.warn('Backend tasks fetch failed, trying Supabase...', err.message);
+  }
+  
+  // Fallback to direct Supabase
   const { data, error } = await supabase
     .from('tasks')
     .select('*')

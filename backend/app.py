@@ -190,6 +190,242 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 #         return {"error": str(e)}, 500
 
 
+# ==================== QUIZ ENDPOINTS ====================
+
+# File-based storage for quiz attempts
+QUIZ_ATTEMPTS_FILE = Path('quiz_attempts.json')
+
+def load_quiz_attempts():
+    """Load quiz attempts from JSON file"""
+    if QUIZ_ATTEMPTS_FILE.exists():
+        try:
+            with open(QUIZ_ATTEMPTS_FILE, 'r') as f:
+                return json.load(f)
+        except Exception as e:
+            print(f"Error loading quiz attempts: {e}")
+            return {}
+    return {}
+
+def save_quiz_attempts(attempts):
+    """Save quiz attempts to JSON file"""
+    try:
+        with open(QUIZ_ATTEMPTS_FILE, 'w') as f:
+            json.dump(attempts, f, indent=2)
+        return True
+    except Exception as e:
+        print(f"Error saving quiz attempts: {e}")
+        return False
+
+@app.route('/api/quiz/submit', methods=['POST'])
+def submit_quiz():
+    """
+    Submit a quiz attempt and record the result
+    
+    Request body:
+    {
+        "user_id": "uuid",
+        "task_id": int,
+        "simulation_id": int,
+        "quiz_result": {
+            "totalScore": int,
+            "totalMarks": int,
+            "percentage": float,
+            "correctCount": int,
+            "totalQuestions": int,
+            "passed": bool,
+            "questionResults": [...],
+            "attemptNumber": int,
+            "completedAt": "ISO timestamp"
+        }
+    }
+    """
+    try:
+        data = request.json
+        user_id = data.get('user_id')
+        task_id = data.get('task_id')
+        simulation_id = data.get('simulation_id')
+        quiz_result = data.get('quiz_result')
+        
+        if not all([user_id, task_id, quiz_result]):
+            return jsonify({'error': 'Missing required fields'}), 400
+        
+        # Load existing attempts
+        attempts = load_quiz_attempts()
+        
+        # Create key for this user+task combination
+        attempt_key = f"{user_id}_{task_id}"
+        
+        if attempt_key not in attempts:
+            attempts[attempt_key] = {
+                'user_id': user_id,
+                'task_id': task_id,
+                'simulation_id': simulation_id,
+                'attempts': [],
+                'best_score': 0,
+                'passed': False,
+                'first_attempt_at': quiz_result.get('completedAt'),
+                'last_attempt_at': quiz_result.get('completedAt')
+            }
+        
+        # Add this attempt
+        attempt_record = {
+            'attempt_number': quiz_result.get('attemptNumber', len(attempts[attempt_key]['attempts']) + 1),
+            'score': quiz_result.get('totalScore', 0),
+            'total_marks': quiz_result.get('totalMarks', 0),
+            'percentage': quiz_result.get('percentage', 0),
+            'passed': quiz_result.get('passed', False),
+            'completed_at': quiz_result.get('completedAt'),
+            'correct_count': quiz_result.get('correctCount', 0),
+            'total_questions': quiz_result.get('totalQuestions', 0)
+        }
+        attempts[attempt_key]['attempts'].append(attempt_record)
+        attempts[attempt_key]['last_attempt_at'] = quiz_result.get('completedAt')
+        
+        # Update best score and passed status
+        if quiz_result.get('percentage', 0) > attempts[attempt_key].get('best_score', 0):
+            attempts[attempt_key]['best_score'] = quiz_result.get('percentage', 0)
+        
+        if quiz_result.get('passed', False):
+            attempts[attempt_key]['passed'] = True
+        
+        # Save attempts
+        save_quiz_attempts(attempts)
+        
+        # Also try to update in Supabase if available
+        if supabase:
+            try:
+                # Try to insert quiz result in Supabase
+                supabase_data = {
+                    'user_id': user_id,
+                    'task_id': task_id,
+                    'simulation_id': simulation_id,
+                    'score': quiz_result.get('totalScore', 0),
+                    'total_marks': quiz_result.get('totalMarks', 0),
+                    'percentage': quiz_result.get('percentage', 0),
+                    'passed': quiz_result.get('passed', False),
+                    'attempt_number': attempt_record['attempt_number'],
+                    'completed_at': quiz_result.get('completedAt')
+                }
+                # This will fail silently if the table doesn't exist
+                supabase.table('quiz_attempts').insert(supabase_data).execute()
+            except Exception as e:
+                print(f"Supabase quiz insert skipped: {e}")
+        
+        # Create notification for quiz result
+        if quiz_result.get('passed', False):
+            create_notification(
+                user_id=user_id,
+                notification_type='quiz_passed',
+                title='🎊 Quiz Passed!',
+                message=f"Congratulations! You passed the quiz with {quiz_result.get('percentage', 0):.0f}%! Keep up the great work!",
+                metadata={
+                    'task_id': task_id,
+                    'simulation_id': simulation_id,
+                    'percentage': quiz_result.get('percentage', 0)
+                }
+            )
+        else:
+            create_notification(
+                user_id=user_id,
+                notification_type='quiz_attempt',
+                title='📝 Quiz Completed',
+                message=f"You scored {quiz_result.get('percentage', 0):.0f}% on the quiz. You need 70% to pass. Keep practicing!",
+                metadata={
+                    'task_id': task_id,
+                    'simulation_id': simulation_id,
+                    'percentage': quiz_result.get('percentage', 0)
+                }
+            )
+        
+        # Track submission in user activity (for admin viewing)
+        if user_id in user_activity_data:
+            if 'submissions' not in user_activity_data[user_id]:
+                user_activity_data[user_id]['submissions'] = []
+            
+            submission_record = {
+                'type': 'quiz',
+                'task_id': task_id,
+                'simulation_id': simulation_id,
+                'score': quiz_result.get('totalScore', 0),
+                'total_marks': quiz_result.get('totalMarks', 0),
+                'percentage': quiz_result.get('percentage', 0),
+                'passed': quiz_result.get('passed', False),
+                'attempt_number': attempt_record['attempt_number'],
+                'timestamp': quiz_result.get('completedAt') or datetime.now().isoformat()
+            }
+            user_activity_data[user_id]['submissions'].insert(0, submission_record)
+            
+            # Add to activity history
+            add_activity_event(user_id, 'quiz_submission', {
+                'task_id': task_id,
+                'passed': quiz_result.get('passed', False),
+                'percentage': quiz_result.get('percentage', 0)
+            })
+            
+            save_activity_data(user_activity_data)
+        
+        return jsonify({
+            'success': True,
+            'message': 'Quiz result recorded',
+            'passed': quiz_result.get('passed', False),
+            'best_score': attempts[attempt_key]['best_score'],
+            'total_attempts': len(attempts[attempt_key]['attempts'])
+        }), 200
+        
+    except Exception as e:
+        print(f"Error in submit_quiz: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/quiz/attempts/<user_id>/<int:task_id>', methods=['GET'])
+def get_quiz_attempts(user_id, task_id):
+    """Get all quiz attempts for a user on a specific task"""
+    try:
+        attempts = load_quiz_attempts()
+        attempt_key = f"{user_id}_{task_id}"
+        
+        if attempt_key in attempts:
+            return jsonify(attempts[attempt_key]), 200
+        else:
+            return jsonify({
+                'user_id': user_id,
+                'task_id': task_id,
+                'attempts': [],
+                'best_score': 0,
+                'passed': False
+            }), 200
+            
+    except Exception as e:
+        print(f"Error in get_quiz_attempts: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/quiz/status/<user_id>/<simulation_id>', methods=['GET'])
+def get_quiz_status(user_id, simulation_id):
+    """Get quiz completion status for all tasks in a simulation"""
+    try:
+        attempts = load_quiz_attempts()
+        
+        # Filter attempts for this user and simulation
+        task_statuses = {}
+        for key, attempt_data in attempts.items():
+            if attempt_data.get('user_id') == user_id and str(attempt_data.get('simulation_id')) == str(simulation_id):
+                task_id = attempt_data.get('task_id')
+                task_statuses[task_id] = {
+                    'passed': attempt_data.get('passed', False),
+                    'best_score': attempt_data.get('best_score', 0),
+                    'total_attempts': len(attempt_data.get('attempts', []))
+                }
+        
+        return jsonify({
+            'user_id': user_id,
+            'simulation_id': simulation_id,
+            'task_statuses': task_statuses
+        }), 200
+        
+    except Exception as e:
+        print(f"Error in get_quiz_status: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
 # ==================== ENROLLMENT ENDPOINTS ====================
 
 # File-based storage for course enrollments
@@ -293,6 +529,26 @@ def enroll_user():
         
         course_enrollments.append(enrollment)
         save_enrollments(course_enrollments)
+        
+        # Create notification for successful enrollment
+        create_notification(
+            user_id=user_id,
+            notification_type='enrollment',
+            title='🎉 Successfully Enrolled!',
+            message=f"You've been enrolled in {internship_name}. Start completing tasks to earn your certificate!",
+            metadata={
+                'internship_id': str(internship_id),
+                'internship_name': internship_name,
+                'tasks_count': len(enrollment['tasks'])
+            }
+        )
+        
+        # Track enrollment in user activity (for admin viewing)
+        if user_id in user_activity_data:
+            add_activity_event(user_id, 'enrollment', {
+                'internship_id': str(internship_id),
+                'internship_name': internship_name
+            })
         
         return jsonify({
             'message': 'Enrollment successful',
@@ -743,19 +999,45 @@ def load_activity_data():
     """Load activity data from JSON file"""
     if ACTIVITY_FILE.exists():
         try:
-            with open(ACTIVITY_FILE, 'r') as f:
+            with open(ACTIVITY_FILE, 'r', encoding='utf-8') as f:
                 return json.load(f)
-        except:
+        except Exception as e:
+            print(f"Error loading activity data: {e}")
             return {}
     return {}
 
 def save_activity_data(data):
     """Save activity data to JSON file"""
-    with open(ACTIVITY_FILE, 'w') as f:
-        json.dump(data, f, indent=2)
+    try:
+        with open(ACTIVITY_FILE, 'w', encoding='utf-8') as f:
+            json.dump(data, f, indent=2)
+    except Exception as e:
+        print(f"Error saving activity data: {e}")
 
 # Load activity data on startup
 user_activity_data = load_activity_data()
+
+def add_activity_event(user_id, event_type, details=None):
+    """Helper function to add an activity event to a user's history"""
+    if user_id not in user_activity_data:
+        return
+    
+    event = {
+        'event_type': event_type,
+        'timestamp': datetime.now().isoformat(),
+        'details': details or {}
+    }
+    
+    if 'activity_history' not in user_activity_data[user_id]:
+        user_activity_data[user_id]['activity_history'] = []
+    
+    # Add to beginning (newest first)
+    user_activity_data[user_id]['activity_history'].insert(0, event)
+    
+    # Keep only last 500 events per user
+    user_activity_data[user_id]['activity_history'] = user_activity_data[user_id]['activity_history'][:500]
+    
+    save_activity_data(user_activity_data)
 
 @app.route('/activity/track', methods=['POST', 'OPTIONS'])
 def track_activity():
@@ -766,7 +1048,8 @@ def track_activity():
         data = request.json
         user_id = data.get('user_id')
         event_type = data.get('event_type')
-        timestamp = data.get('timestamp')
+        timestamp = data.get('timestamp') or datetime.now().isoformat()
+        session_id = data.get('session_id')
         
         if not user_id:
             return jsonify({'error': 'Missing user_id'}), 400
@@ -783,28 +1066,69 @@ def track_activity():
                 'total_active_time': 0,
                 'sessions': [],
                 'page_visits': [],
-                'current_session': None
+                'current_session': None,
+                'activity_history': [],
+                'submissions': []
             }
         
         user_data = user_activity_data[user_id]
         user_data['last_seen'] = timestamp
         
+        # Update user info if provided
+        if data.get('user_email'):
+            user_data['user_email'] = data.get('user_email')
+        if data.get('user_name'):
+            user_data['user_name'] = data.get('user_name')
+        
         if event_type == 'session_start':
             # Start a new session
             session_data = {
-                'session_id': str(uuid.uuid4()),
+                'session_id': session_id or data.get('session_id') or str(uuid.uuid4()),
                 'started_at': timestamp,
                 'ended_at': None,
                 'duration_seconds': 0,
-                'pages_visited': []
+                'active_time_seconds': 0,
+                'pages_visited': [],
+                'is_active': True,
+                'user_agent': data.get('user_agent'),
+                'screen_resolution': data.get('screen_resolution'),
+                'timezone': data.get('timezone')
             }
             user_data['current_session'] = session_data
+            
+            # Add to activity history
+            add_activity_event(user_id, 'session_start', {'session_id': session_data['session_id']})
             
         elif event_type == 'heartbeat':
             # Update current session duration
             if user_data.get('current_session'):
                 session_duration = data.get('session_duration', 0)
+                active_time = data.get('active_time', 0)
                 user_data['current_session']['duration_seconds'] = session_duration
+                user_data['current_session']['active_time_seconds'] = active_time
+                user_data['current_session']['last_heartbeat'] = timestamp
+                user_data['current_session']['current_page'] = data.get('current_page')
+                user_data['current_session']['is_active'] = True
+                
+        elif event_type == 'user_idle':
+            # User became idle
+            if user_data.get('current_session'):
+                user_data['current_session']['is_active'] = False
+                user_data['current_session']['idle_started_at'] = data.get('idle_started_at')
+                user_data['current_session']['duration_seconds'] = data.get('session_duration', 0)
+                user_data['current_session']['active_time_seconds'] = data.get('active_time', 0)
+                
+        elif event_type == 'user_returned':
+            # User returned from idle/tab switch
+            if user_data.get('current_session'):
+                user_data['current_session']['is_active'] = True
+                user_data['current_session']['duration_seconds'] = data.get('session_duration', 0)
+                
+        elif event_type == 'activity_resume':
+            # User resumed activity after being idle
+            if user_data.get('current_session'):
+                user_data['current_session']['is_active'] = True
+                user_data['current_session']['resumed_at'] = data.get('resumed_at')
                 
         elif event_type == 'session_end':
             # End current session
@@ -812,24 +1136,51 @@ def track_activity():
                 session = user_data['current_session']
                 session['ended_at'] = timestamp
                 session['duration_seconds'] = data.get('session_duration', 0)
+                session['active_time_seconds'] = data.get('active_time', 0)
+                session['is_active'] = False
+                session['ended_reason'] = data.get('ended_reason', 'unknown')
                 user_data['sessions'].append(session)
                 user_data['total_session_time'] += session['duration_seconds']
+                user_data['total_active_time'] += session.get('active_time_seconds', 0)
                 user_data['current_session'] = None
+                
+                # Add to activity history
+                add_activity_event(user_id, 'session_end', {
+                    'session_id': session['session_id'],
+                    'duration_seconds': session['duration_seconds'],
+                    'active_time_seconds': session.get('active_time_seconds', 0),
+                    'ended_reason': session.get('ended_reason')
+                })
                 
         elif event_type == 'page_view':
             # Track page view
             page_visit = {
                 'page_path': data.get('page_path'),
-                'visited_at': timestamp
+                'page_title': data.get('page_title'),
+                'visited_at': timestamp,
+                'previous_page': data.get('previous_page'),
+                'session_id': session_id
             }
             if user_data.get('current_session'):
                 user_data['current_session']['pages_visited'].append(page_visit)
+                
+        elif event_type == 'visibility_change':
+            # Track when user switches tabs/minimizes
+            if user_data.get('current_session'):
+                user_data['current_session']['last_visibility_state'] = data.get('visibility_state')
+                user_data['current_session']['duration_seconds'] = data.get('session_duration', 0)
+                if data.get('visibility_state') == 'hidden':
+                    user_data['current_session']['hidden_at'] = timestamp
+                else:
+                    user_data['current_session']['visible_at'] = timestamp
         
         save_activity_data(user_activity_data)
         return jsonify({'status': 'success'}), 200
         
     except Exception as e:
         print(f"Error tracking activity: {e}")
+        import traceback
+        traceback.print_exc()
         return jsonify({'error': str(e)}), 500
 
 
@@ -885,26 +1236,63 @@ def handle_session_end():
         data = request.get_json(force=True) if request.is_json else json.loads(request.data.decode('utf-8'))
         user_id = data.get('user_id')
         
-        if not user_id or user_id not in user_activity_data:
+        if not user_id:
             return jsonify({'status': 'ok'}), 200
         
+        # Initialize user data if not exists
+        if user_id not in user_activity_data:
+            user_activity_data[user_id] = {
+                'user_id': user_id,
+                'user_email': data.get('user_email'),
+                'user_name': data.get('user_name'),
+                'first_seen': data.get('timestamp'),
+                'last_seen': data.get('timestamp'),
+                'total_session_time': 0,
+                'total_active_time': 0,
+                'sessions': [],
+                'page_visits': [],
+                'current_session': None,
+                'activity_history': [],
+                'submissions': []
+            }
+        
         user_data = user_activity_data[user_id]
+        user_data['last_seen'] = data.get('timestamp')
+        
+        # Update user info if provided
+        if data.get('user_email'):
+            user_data['user_email'] = data.get('user_email')
+        if data.get('user_name'):
+            user_data['user_name'] = data.get('user_name')
         
         # End current session
         if user_data.get('current_session'):
             session = user_data['current_session']
             session['ended_at'] = data.get('timestamp')
             session['duration_seconds'] = data.get('session_duration', 0)
+            session['active_time_seconds'] = data.get('active_time', 0)
+            session['ended_reason'] = data.get('ended_reason', 'page_unload')
+            session['is_active'] = False
             user_data['sessions'].append(session)
             user_data['total_session_time'] += session['duration_seconds']
+            user_data['total_active_time'] += session.get('active_time_seconds', 0)
             user_data['current_session'] = None
+            
+            # Add to activity history
+            add_activity_event(user_id, 'session_end', {
+                'session_id': session.get('session_id'),
+                'duration_seconds': session['duration_seconds'],
+                'active_time_seconds': session.get('active_time_seconds', 0),
+                'ended_reason': session.get('ended_reason')
+            })
         
         # Track last page duration
         if data.get('last_page') and data.get('last_page_duration'):
             page_visit = {
                 'page_path': data.get('last_page'),
                 'duration_seconds': data.get('last_page_duration'),
-                'ended_at': data.get('timestamp')
+                'ended_at': data.get('timestamp'),
+                'session_id': data.get('session_id')
             }
             user_data['page_visits'].append(page_visit)
         
@@ -927,11 +1315,14 @@ def get_user_activity(user_id):
         # Calculate aggregated stats
         total_sessions = len(activity.get('sessions', []))
         total_time = activity.get('total_session_time', 0)
+        total_active_time = activity.get('total_active_time', 0)
         
         # Add current session time if active
         if activity.get('current_session'):
             current_duration = activity['current_session'].get('duration_seconds', 0)
+            current_active_time = activity['current_session'].get('active_time_seconds', 0)
             total_time += current_duration
+            total_active_time += current_active_time
         
         # Group page visits by path and calculate total time per page
         page_time_map = {}
@@ -948,29 +1339,303 @@ def get_user_activity(user_id):
                     'visit_count': 1
                 }
         
+        # Also include pages from sessions
+        for session in activity.get('sessions', []):
+            for page in session.get('pages_visited', []):
+                path = page.get('page_path', 'Unknown')
+                if path not in page_time_map:
+                    page_time_map[path] = {
+                        'page_path': path,
+                        'total_seconds': 0,
+                        'visit_count': 0
+                    }
+                page_time_map[path]['visit_count'] += 1
+        
         page_analytics = list(page_time_map.values())
         page_analytics.sort(key=lambda x: x['total_seconds'], reverse=True)
         
-        # Get recent sessions (last 10)
-        recent_sessions = activity.get('sessions', [])[-10:]
+        # Get recent sessions (last 20)
+        recent_sessions = activity.get('sessions', [])[-20:]
         recent_sessions.reverse()
+        
+        # Get activity history (submissions, quiz attempts, etc.)
+        activity_history = activity.get('activity_history', [])[:100]
+        
+        # Get submissions
+        submissions = activity.get('submissions', [])
+        
+        # Check if user is currently online (session active or heartbeat within last 2 minutes)
+        is_currently_active = False
+        current_session_duration = 0
+        if activity.get('current_session'):
+            is_currently_active = activity['current_session'].get('is_active', False)
+            current_session_duration = activity['current_session'].get('duration_seconds', 0)
+            
+            # Check last heartbeat time
+            last_heartbeat = activity['current_session'].get('last_heartbeat')
+            if last_heartbeat:
+                try:
+                    heartbeat_time = datetime.fromisoformat(last_heartbeat.replace('Z', '+00:00'))
+                    now = datetime.now(heartbeat_time.tzinfo) if heartbeat_time.tzinfo else datetime.now()
+                    time_since_heartbeat = (now - heartbeat_time).total_seconds()
+                    is_currently_active = time_since_heartbeat < 120  # 2 minutes
+                except:
+                    pass
         
         return jsonify({
             'user_id': user_id,
+            'user_email': activity.get('user_email'),
+            'user_name': activity.get('user_name'),
             'first_seen': activity.get('first_seen'),
             'last_seen': activity.get('last_seen'),
             'total_sessions': total_sessions,
             'total_time_seconds': total_time,
-            'is_currently_active': activity.get('current_session') is not None,
-            'current_session_duration': activity.get('current_session', {}).get('duration_seconds', 0) if activity.get('current_session') else 0,
-            'page_analytics': page_analytics[:10],  # Top 10 pages
-            'recent_sessions': recent_sessions
+            'total_active_time_seconds': total_active_time,
+            'is_currently_active': is_currently_active,
+            'current_session_duration': current_session_duration,
+            'current_page': activity.get('current_session', {}).get('current_page') if activity.get('current_session') else None,
+            'page_analytics': page_analytics[:15],  # Top 15 pages
+            'recent_sessions': recent_sessions,
+            'activity_history': activity_history,
+            'submissions': submissions
         }), 200
         
     except Exception as e:
         print(f"Error getting user activity: {e}")
         import traceback
         traceback.print_exc()
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/admin/all-users/activity', methods=['GET'])
+def get_all_users_activity():
+    """Get activity summary for all users - Admin only"""
+    try:
+        users_summary = []
+        
+        for user_id, activity in user_activity_data.items():
+            # Calculate total time
+            total_time = activity.get('total_session_time', 0)
+            total_active_time = activity.get('total_active_time', 0)
+            
+            if activity.get('current_session'):
+                total_time += activity['current_session'].get('duration_seconds', 0)
+                total_active_time += activity['current_session'].get('active_time_seconds', 0)
+            
+            # Count submissions
+            submissions_count = len(activity.get('submissions', []))
+            
+            # Check if user is currently online
+            is_currently_active = False
+            if activity.get('current_session'):
+                is_currently_active = activity['current_session'].get('is_active', False)
+                
+                # Check last heartbeat time
+                last_heartbeat = activity['current_session'].get('last_heartbeat')
+                if last_heartbeat:
+                    try:
+                        heartbeat_time = datetime.fromisoformat(last_heartbeat.replace('Z', '+00:00'))
+                        now = datetime.now(heartbeat_time.tzinfo) if heartbeat_time.tzinfo else datetime.now()
+                        time_since_heartbeat = (now - heartbeat_time).total_seconds()
+                        is_currently_active = time_since_heartbeat < 120  # 2 minutes
+                    except:
+                        pass
+            
+            users_summary.append({
+                'user_id': user_id,
+                'user_email': activity.get('user_email', 'Unknown'),
+                'user_name': activity.get('user_name', 'Unknown'),
+                'first_seen': activity.get('first_seen'),
+                'last_seen': activity.get('last_seen'),
+                'total_sessions': len(activity.get('sessions', [])),
+                'total_time_seconds': total_time,
+                'total_active_time_seconds': total_active_time,
+                'is_currently_active': is_currently_active,
+                'current_page': activity.get('current_session', {}).get('current_page') if activity.get('current_session') else None,
+                'submissions_count': submissions_count
+            })
+        
+        # Sort by last_seen (most recent first)
+        users_summary.sort(key=lambda x: x.get('last_seen') or '', reverse=True)
+        
+        # Calculate overall stats
+        total_users = len(users_summary)
+        active_users = sum(1 for u in users_summary if u['is_currently_active'])
+        total_time_all = sum(u['total_time_seconds'] for u in users_summary)
+        
+        return jsonify({
+            'users': users_summary,
+            'stats': {
+                'total_users': total_users,
+                'active_users': active_users,
+                'total_time_all_users': total_time_all
+            }
+        }), 200
+        
+    except Exception as e:
+        print(f"Error getting all users activity: {e}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/admin/activity/submissions', methods=['GET'])
+def get_all_submissions():
+    """Get all submission history across all users - Admin only"""
+    try:
+        all_submissions = []
+        
+        for user_id, activity in user_activity_data.items():
+            user_submissions = activity.get('submissions', [])
+            for submission in user_submissions:
+                all_submissions.append({
+                    **submission,
+                    'user_id': user_id,
+                    'user_email': activity.get('user_email'),
+                    'user_name': activity.get('user_name')
+                })
+        
+        # Sort by timestamp (most recent first)
+        all_submissions.sort(key=lambda x: x.get('timestamp') or '', reverse=True)
+        
+        return jsonify({
+            'submissions': all_submissions[:200],  # Last 200 submissions
+            'total': len(all_submissions)
+        }), 200
+        
+    except Exception as e:
+        print(f"Error getting all submissions: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
+# ==================== NOTIFICATIONS API ====================
+
+# Notifications JSON file path
+NOTIFICATIONS_FILE = Path(__file__).parent / 'notifications.json'
+
+def load_notifications():
+    """Load notifications from JSON file"""
+    if NOTIFICATIONS_FILE.exists():
+        try:
+            with open(NOTIFICATIONS_FILE, 'r') as f:
+                return json.load(f)
+        except Exception as e:
+            print(f"Error loading notifications: {e}")
+            return {}
+    return {}
+
+def save_notifications(notifications):
+    """Save notifications to JSON file"""
+    try:
+        with open(NOTIFICATIONS_FILE, 'w') as f:
+            json.dump(notifications, f, indent=2)
+        return True
+    except Exception as e:
+        print(f"Error saving notifications: {e}")
+        return False
+
+def create_notification(user_id, notification_type, title, message, metadata=None):
+    """Create a new notification for a user"""
+    notifications = load_notifications()
+    
+    if user_id not in notifications:
+        notifications[user_id] = []
+    
+    notification = {
+        'id': str(uuid.uuid4()),
+        'type': notification_type,  # 'enrollment', 'task_completion', 'quiz_result', 'badge', 'announcement', etc.
+        'title': title,
+        'message': message,
+        'metadata': metadata or {},
+        'read': False,
+        'created_at': datetime.now().isoformat()
+    }
+    
+    # Add to beginning of list (newest first)
+    notifications[user_id].insert(0, notification)
+    
+    # Keep only last 100 notifications per user
+    notifications[user_id] = notifications[user_id][:100]
+    
+    save_notifications(notifications)
+    return notification
+
+
+@app.route('/api/notifications/<user_id>', methods=['GET'])
+def get_notifications(user_id):
+    """Get all notifications for a user"""
+    try:
+        notifications = load_notifications()
+        user_notifications = notifications.get(user_id, [])
+        
+        # Calculate unread count
+        unread_count = sum(1 for n in user_notifications if not n.get('read', False))
+        
+        return jsonify({
+            'notifications': user_notifications,
+            'unread_count': unread_count,
+            'total': len(user_notifications)
+        }), 200
+        
+    except Exception as e:
+        print(f"Error getting notifications: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/notifications/<user_id>/mark-read', methods=['POST'])
+def mark_notifications_read(user_id):
+    """Mark specific notifications as read"""
+    try:
+        data = request.json
+        notification_ids = data.get('notification_ids', [])
+        mark_all = data.get('mark_all', False)
+        
+        notifications = load_notifications()
+        user_notifications = notifications.get(user_id, [])
+        
+        for notification in user_notifications:
+            if mark_all or notification.get('id') in notification_ids:
+                notification['read'] = True
+        
+        notifications[user_id] = user_notifications
+        save_notifications(notifications)
+        
+        return jsonify({'status': 'success', 'message': 'Notifications marked as read'}), 200
+        
+    except Exception as e:
+        print(f"Error marking notifications as read: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/notifications/<user_id>/clear', methods=['DELETE'])
+def clear_notifications(user_id):
+    """Clear all notifications for a user"""
+    try:
+        notifications = load_notifications()
+        notifications[user_id] = []
+        save_notifications(notifications)
+        
+        return jsonify({'status': 'success', 'message': 'All notifications cleared'}), 200
+        
+    except Exception as e:
+        print(f"Error clearing notifications: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/notifications/<user_id>/delete/<notification_id>', methods=['DELETE'])
+def delete_notification(user_id, notification_id):
+    """Delete a specific notification"""
+    try:
+        notifications = load_notifications()
+        user_notifications = notifications.get(user_id, [])
+        
+        notifications[user_id] = [n for n in user_notifications if n.get('id') != notification_id]
+        save_notifications(notifications)
+        
+        return jsonify({'status': 'success', 'message': 'Notification deleted'}), 200
+        
+    except Exception as e:
+        print(f"Error deleting notification: {e}")
         return jsonify({'error': str(e)}), 500
 
 

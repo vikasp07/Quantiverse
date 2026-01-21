@@ -19,6 +19,7 @@ import {
   LogOut,
   ChevronRight,
   Briefcase,
+  Activity,
 } from "lucide-react";
 import { supabase } from "./utils/supabaseClient";
 
@@ -39,22 +40,34 @@ const Sidebar = () => {
 
       if (userError || !user) return setRole("user");
 
-      setFullName(user.user_metadata?.display_name || user.email?.split('@')[0] || "User");
+      setFullName(
+        user.user_metadata?.display_name || user.email?.split("@")[0] || "User"
+      );
       setEmail(user.email || "");
 
-      const { data: roleData, error: roleError } = await supabase
-        .from("user_roles")
-        .select("role")
-        .eq("user_id", user.id)
-        .maybeSingle();
+      // Check user_metadata first for role
+      if (user.user_metadata?.role) {
+        setRole(user.user_metadata.role);
+        setLoading(false);
+        return;
+      }
 
-      if (roleError) {
-        console.error("Role fetch error:", roleError);
+      // Fallback: query user_roles table
+      try {
+        const { data: roleData, error: roleError } = await supabase
+          .from("user_roles")
+          .select("role")
+          .eq("user_id", user.id)
+          .maybeSingle();
+
+        if (!roleError && roleData?.role) {
+          setRole(roleData.role);
+        } else {
+          setRole("user");
+        }
+      } catch (err) {
+        console.log("Role fetch fallback to user");
         setRole("user");
-      } else if (!roleData) {
-        setRole("user");
-      } else {
-        setRole(roleData.role);
       }
 
       setLoading(false);
@@ -87,8 +100,13 @@ const Sidebar = () => {
 
   const adminMenuItems = [
     // { icon: PlusCircle, label: "Question Bank", path: "/admin" }, // Disabled
+    { icon: Activity, label: "User Activity", path: "/admin/activity" },
     { icon: Check, label: "Task Confirmation", path: "/confirmation" },
-    { icon: GraduationCap, label: "Manage Internships", path: "/edit-internship" },
+    {
+      icon: GraduationCap,
+      label: "Manage Internships",
+      path: "/edit-internship",
+    },
   ];
 
   const menuItems = role === "admin" ? adminMenuItems : userMenuItems;
@@ -117,12 +135,14 @@ const Sidebar = () => {
             {role === "admin" ? "Administration" : "Main Menu"}
           </span>
         </div>
-        
+
         <div className="space-y-1">
           {menuItems.map((item, index) => {
-            const isActive = location.pathname === item.path || 
-              (item.path !== "/internship" && location.pathname.startsWith(item.path));
-            
+            const isActive =
+              location.pathname === item.path ||
+              (item.path !== "/internship" &&
+                location.pathname.startsWith(item.path));
+
             return (
               <button
                 key={index}
@@ -130,13 +150,20 @@ const Sidebar = () => {
                 className={`
                   w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium
                   transition-all duration-150 group
-                  ${isActive 
-                    ? "bg-blue-50 text-blue-700" 
-                    : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                  ${
+                    isActive
+                      ? "bg-blue-50 text-blue-700"
+                      : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
                   }
                 `}
               >
-                <item.icon className={`w-5 h-5 flex-shrink-0 ${isActive ? "text-emerald-600" : "text-slate-400 group-hover:text-slate-600"}`} />
+                <item.icon
+                  className={`w-5 h-5 flex-shrink-0 ${
+                    isActive
+                      ? "text-emerald-600"
+                      : "text-slate-400 group-hover:text-slate-600"
+                  }`}
+                />
                 <span className="flex-1 text-left">{item.label}</span>
                 {isActive && (
                   <div className="w-1.5 h-1.5 rounded-full bg-emerald-600" />
@@ -176,7 +203,9 @@ const Sidebar = () => {
             </span>
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-slate-900 truncate">{fullName}</p>
+            <p className="text-sm font-medium text-slate-900 truncate">
+              {fullName}
+            </p>
             <p className="text-xs text-slate-500 truncate">{email}</p>
           </div>
         </div>
